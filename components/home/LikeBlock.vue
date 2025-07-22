@@ -1,5 +1,15 @@
 <script setup>
+import { defineProps } from 'vue';
 import ProductBlock from '../common/ProductBlock.vue';
+
+const props = defineProps({
+  title: {
+    type: String,
+    required: false,
+    default: null,
+  }
+})
+
 const products = [
   {
     title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
@@ -145,7 +155,7 @@ const products = [
 <template>
   <div class="wrap">
     <div class="like">
-      <h2>Может понравиться</h2>
+      <h2 v-if="props.title">{{ props.title }}</h2>
       <div class="products">
         <ProductBlock v-for="product in products" :key="product.title" :title="product.title" :image="product.image"
           :price="product.price" :newprice="product.newprice" :discount="product.discount" :star="product.star"
