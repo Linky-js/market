@@ -73,4 +73,11 @@ const addToCart = () => {
   &:disabled
     background: #DDDDDD
 
+.btn-product 
+  .btn-text 
+    font-size: 15px
+  svg 
+    width: 24px
+    height: auto
+
 </style>
