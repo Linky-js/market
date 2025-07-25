@@ -95,7 +95,7 @@ const right = {
   display: flex
   align-items: center
   justify-content: space-between
-  gap: 15px
+  gap: 5px
   .sale 
     padding: 4px 10px
     border-radius: 100px

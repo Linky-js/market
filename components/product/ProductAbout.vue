@@ -63,6 +63,12 @@ const isParagraphActive = ref(false)
 const toggleParagraphActive = () => {
   isParagraphActive.value = !isParagraphActive.value
 }
+
+const isHarActive = ref(false)
+
+const toggleHarActive = () => {
+  isHarActive.value = !isHarActive.value
+}
 </script>
 <template>
   <div class="about">
@@ -74,7 +80,7 @@ const toggleParagraphActive = () => {
     <div class="about__content">
       <div class="about__text" v-show="activeTab === 0">
         <p :class="{ active: isParagraphActive }">{{ about.about }}</p>
-        <button @click="toggleParagraphActive">{{ isParagraphActive ? 'Свернуть' : 'Показать больше' }}
+        <button @click="toggleParagraphActive" v-if="!isParagraphActive">Показать больше
           <svg :class="{ active: isParagraphActive }" width="17" height="8" viewBox="0 0 17 8" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_392_19179)">
@@ -91,10 +97,27 @@ const toggleParagraphActive = () => {
         </button>
       </div>
       <div class="about__har" v-show="activeTab === 1">
-        <div class="about__har-item" v-for="item in about.har">
-          <span>{{ item.title }}</span>
-          <span>{{ item.text }}</span>
+        <div class="about__har-list" :class="{ active: isHarActive }">
+          <div class="about__har-item" v-for="item in about.har">
+            <span>{{ item.title }}</span>
+            <span>{{ item.text }}</span>
+          </div>
         </div>
+        <button @click="toggleHarActive" v-if="!isHarActive">Показать больше
+          <svg :class="{ active: isHarActive }" width="17" height="8" viewBox="0 0 17 8" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_392_19179)">
+              <path fill-rule="evenodd" clip-rule="evenodd"
+                d="M8.02623 6.77162L4.2549 3.00028L5.19757 2.05762L8.49757 5.35762L11.7976 2.05762L12.7402 3.00028L8.9689 6.77162C8.84388 6.8966 8.67434 6.96681 8.49757 6.96681C8.32079 6.96681 8.15125 6.8966 8.02623 6.77162Z"
+                fill="#A1A1A1" />
+            </g>
+            <defs>
+              <clipPath id="clip0_392_19179">
+                <rect width="8" height="16" fill="white" transform="translate(16.5) rotate(90)" />
+              </clipPath>
+            </defs>
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -107,6 +130,7 @@ const toggleParagraphActive = () => {
   max-width: calc(1000px * 100% / 1296px)
   width: 100%
   margin-top: 48px
+  margin-bottom: 24px
   h2 
     font-size: 20px
     font-weight: 600
@@ -136,19 +160,8 @@ const toggleParagraphActive = () => {
       height: 90px
       overflow: hidden
       position: relative
-      &::after 
-        content: ''
-        display: block
-        position: absolute
-        width: 100%
-        height: 100%
-        top: 0
-        left: 0
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #fff 100%)
       &.active 
         height: auto
-        &::after 
-          display: none
     button 
       display: flex
       align-items: center
@@ -163,6 +176,24 @@ const toggleParagraphActive = () => {
         &.active 
           transform: rotate(180deg)
   &__har 
+    &-list 
+      height: 179px
+      overflow: hidden
+      &.active 
+        height: auto
+    button 
+      display: flex
+      align-items: center
+      justify-content: center
+      gap: 3px
+      margin: 12px auto 0
+      color: #A1A1A1
+      font-size: 12px
+      font-weight: 500
+      line-height: 100%
+      svg 
+        &.active 
+          transform: rotate(180deg)
     &-item 
       box-shadow: 0px 0.4px 0px 0px rgba(0, 0, 0, 0.25)
       padding: 9px 0
