@@ -35,6 +35,13 @@ const product = defineProps({
     <NuxtLink :to="product.link" class="img">
       <NuxtImg :src="product.image" format="webp" />
       <div v-if="product.discount" class="sale">{{ product.discount }} </div>
+      <button class="like">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M16.5 4C19.0523 4 21 5.94772 21 8.5C21 10.3141 20.0157 11.9822 18.5947 13.6426C17.1667 15.3111 15.1409 17.1444 12.7842 19.2783L12.707 19.3574L12 20.0645L11.293 19.3574L11.2148 19.2783C8.85839 17.1446 6.83315 15.311 5.40527 13.6426C3.98429 11.9822 3 10.3141 3 8.5C3 5.94772 4.94772 4 7.5 4C9.1852 4 10.8424 4.93355 11.6914 6.36035H12.3164C13.1599 4.93169 14.8178 4 16.5 4Z"
+            stroke="#C9C9D1" stroke-width="2" />
+        </svg>
+      </button>
     </NuxtLink>
     <div v-if="!product.newprice" class="price">{{ product.price }} <span>₽</span></div>
     <div v-if="product.newprice" class="newprice">
@@ -79,6 +86,20 @@ const product = defineProps({
     transition: .3s all
     &:hover 
       opacity: .7
+.like 
+  position: absolute
+  top: 6px
+  right: 6px
+  &.active 
+    path 
+      fill: var(--color-blue)
+      stroke: var(--color-blue)
+  svg 
+    width: 24px
+    height: auto
+    path
+      transition: .3s all
+    
 .sale 
   font-weight: bold
   color: #fff
