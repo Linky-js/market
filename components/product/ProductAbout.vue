@@ -1,5 +1,13 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, defineProps, defineEmits } from 'vue'
+
+const emit = defineEmits(['toggleHarActive'])
+const props = defineProps({
+  charakteristick: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const activeTab = ref(0) // индекс активного таба
 const about = {
@@ -55,7 +63,17 @@ const about = {
     },
   ]
 }
+watch(() => props.charakteristick, (newValue) => {
+  if (newValue) {
+    console.log('charakteristick',newValue);
+    
+    activeTab.value = 1
+  }
+})
 const setActiveTab = (index) => {
+  if (index === 0) {
+   emit('toggleHarActive', false)
+  }
   activeTab.value = index
 }
 const isParagraphActive = ref(false)
@@ -98,7 +116,7 @@ const toggleHarActive = () => {
       </div>
       <div class="about__har" v-show="activeTab === 1">
         <div class="about__har-list" :class="{ active: isHarActive }">
-          <div class="about__har-item" v-for="item in about.har">
+          <div class="about__har-item" v-for="item in about.har" :key="item">
             <span>{{ item.title }}</span>
             <span>{{ item.text }}</span>
           </div>

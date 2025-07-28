@@ -1,6 +1,8 @@
 <script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { ref } from 'vue'
+import { ref, defineEmits } from 'vue'
+
+const emit = defineEmits(['toggleHarActive'])
 const desk = {
   title: 'Пылесос Xiaomi DEERMA DX700 Белый',
   star: '4.7',
@@ -124,7 +126,7 @@ const setActiveSize = (index) => {
         <span>{{ har.title }}</span>
         <span>{{ har.text }}</span>
       </div>
-      <button>Показать больше
+      <button @click="emit('toggleHarActive', true)">Показать больше
         <svg width="17" height="8" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg">
           <g clip-path="url(#clip0_388_14526)">
             <path fill-rule="evenodd" clip-rule="evenodd"

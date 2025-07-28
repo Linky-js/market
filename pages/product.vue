@@ -7,16 +7,21 @@ import ProductAbout from '~/components/product/ProductAbout.vue';
 import SliderProducts from '~/components/product/SliderProducts.vue';
 import ProductReviews from '~/components/product/ProductReviews.vue';
 import LikeBlock from '~/components/home/LikeBlock.vue';
+
+const charakteristick = ref(false)
+const goCharakteristick = (event) => {
+  charakteristick.value = event
+}
 </script>
 <template>
   <div class="product">
     <BreadBlock />
     <div class="product__top">
       <ProductSlide />
-      <ProductDesk />
+      <ProductDesk @toggleHarActive="goCharakteristick($event)" />
       <ProductRight />
     </div>
-    <ProductAbout />
+    <ProductAbout @toggleHarActive="goCharakteristick($event)" :charakteristick="charakteristick" />
     <SliderProducts :title="'Похожие товары'" />
     <ProductReviews />
   </div>
