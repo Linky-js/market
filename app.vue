@@ -1,3 +1,12 @@
+<script setup>
+import { onMounted } from "vue";
+const user = useCookie('user');
+
+onMounted(() => {
+  console.log(user.value);
+  
+})
+</script>
 <template>
   <Head>
     <Title>Маркетплейс Карена</Title>
