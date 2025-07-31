@@ -20,10 +20,26 @@ const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
   document.body.classList.toggle('o-hidden', isMenuOpen.value)
 }
+
+
+const isMobile = ref(false)
+
+const checkWidth = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  checkWidth()
+  window.addEventListener('resize', checkWidth)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkWidth)
+})
 </script>
 
 <template>
-  <header>
+  <header class="header">
     <!-- Загрузка -->
     <div v-if="loading" class="flex items-center gap-4 w-full">
 
@@ -35,13 +51,12 @@ const toggleMenu = () => {
         <div v-for="i in 3" :key="i" class="w-6 h-6 bg-gray-200 rounded-full animate-pulse"></div>
       </div>
     </div>
-
-    <div v-else class="flex items-center gap-4 w-full">
+    <div v-else class="header__inner">
 
       <div class="header__logo">
         Logo
       </div>
-      <div class="header__search">
+      <div v-if="!isMobile" class="header__search">
         <div class="burger" :class="{ active: isMenuOpen }" @click="toggleMenu">
           <span></span>
           <span></span>
@@ -49,23 +64,35 @@ const toggleMenu = () => {
         </div>
         <searchHeader />
       </div>
-      <div class="flex items-center gap-4">
+      <div v-if="!isMobile" class="header__icons">
         <IconHeader :name="'shop'" :link="'/'" />
         <IconHeader :name="'whishlist'" :link="'/whishlist'" />
         <IconHeader :name="'user'" :link="'/user'" />
       </div>
+      <div v-if="isMobile" class="header__city">
+        Выберите город
+      </div>
     </div>
   </header>
-
   <CatalogMenu :open="isMenuOpen" @close="toggleMenu" />
 </template>
 
 <style scoped lang="sass">
-header 
+.header 
   background: #fff
   padding: 25px 48px
   position: relative
   z-index: 5
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+.header__inner 
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: 24px
+  width: 100%
 .header__search 
   width: 100%
   border-radius: 8px
@@ -73,6 +100,10 @@ header
   padding-left: 16px
   display: flex
   align-items: center
+.header__icons 
+  display: flex
+  align-items: center
+  gap: 24px
 .burger
   display: flex
   flex-direction: column
@@ -95,13 +126,21 @@ header
       opacity: 0
     span:nth-child(3)
       transform: rotate(-45deg) translate(5px, -5px)
+.header__city 
+  font-size: 14px
+  line-height: 100%
+  letter-spacing: -0.02em
+  color: #7a7a7a
+  padding: 8px 13px 9px
+  background: #EDEDED
+  border-radius: 8px
 .header__logo 
   max-width: 146px
   width: 100%
   display: flex
   align-items: center
   justify-content: center
-  padding: 10px
+  padding: 12px 10px
   background: #EDEDED
   border-radius: 8px
   font-size: 24px
@@ -110,4 +149,16 @@ header
   color: #898989
   font-weight: 800
   font-style: italic
+@media (max-width: 1440px)
+  .header 
+    padding: 25px 24px
+
+@media (max-width: 768px)
+  .header 
+    padding: 10px 16px
+  .header__logo 
+    font-size: 24px
+    line-height: 100%
+    max-width: 104px
+    padding: 5px
 </style>

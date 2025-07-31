@@ -162,9 +162,9 @@ const products = [
   <div class="like">
     <h2 v-if="props.title">{{ props.title }}</h2>
     <div class="products">
-      <Swiper class="slider" :slides-per-view="'auto'" :space-between="12">
+      <Swiper class="slider" :slides-per-view="'auto'" :space-between="12" :breakpoints="{0: { spaceBetween: 6}, 768: { spaceBetween: 12 }}">
         <SwiperSlide v-for="product in products" :key="product.title">
-          <ProductBlock :title="product.title" :image="product.image" :price="product.price"
+          <ProductBlock class="slider-product" :title="product.title" :image="product.image" :price="product.price"
             :newprice="product.newprice" :discount="product.discount" :star="product.star" :reviews="product.reviews" />
         </SwiperSlide>
       </Swiper>
@@ -183,4 +183,11 @@ const products = [
 .swiper-slide 
   max-width: 206px
   width: 100%
+@media (max-width: 768px)
+  .swiper-slide 
+    max-width: 132px
+    img 
+      height: 100px
+  .like 
+    padding: 18px 16px
 </style>

@@ -225,4 +225,22 @@ const toggleHarActive = () => {
         font-weight: 500
         &:first-child
           color: rgba(137, 137, 137, 1)
+@media (max-width: 1200px)
+  .about 
+    max-width: 100%
+@media (max-width: 768px)
+  .about 
+    margin-top: 8px
+    margin-bottom: 8px
+    padding: 18px 16px 16px
+    &__text 
+      button 
+        color: var(--color-blue)
+        path 
+          fill: var(--color-blue)
+    &__har 
+      button 
+        color: var(--color-blue)
+        path 
+          fill: var(--color-blue)
 </style>

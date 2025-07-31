@@ -281,5 +281,17 @@ const setActiveSize = (index) => {
       font-weight: 500
       line-height: 100%
       text-align: center
-      
+@media (max-width: 1200px)
+  .desk 
+    max-width: calc(40% - 12px)
+@media (max-width: 768px)
+  .desk 
+    max-width: 100%
+    order: 3
+    padding: 16px 16px 36px
+    &__top, &__rev, &__har
+      display: none
+    &__colors 
+      .images 
+        margin-bottom: 15px
 </style>
