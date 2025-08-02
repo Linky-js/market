@@ -154,7 +154,7 @@ const product = defineProps({
   font-weight: 500
   font-size: 16px
   line-height: 20px
-  letter-spacing: -2%
+  letter-spacing: -0.02em
   margin-bottom: 7px
   margin-top: 7px
   overflow: hidden
@@ -176,4 +176,41 @@ const product = defineProps({
   line-height: 18px
 .flex 
   margin-bottom: 12px
+@media (max-width: 768px)
+  .img 
+    margin-bottom: 10px
+    img 
+      height: 208px
+  .price 
+    font-size: 18px
+    span 
+      font-size: 14px
+  .newprice 
+    gap: 6px
+    div
+      &:nth-child(1)
+        font-size: 18px
+        span 
+          font-size: 14px
+      &:nth-child(2)
+        font-size: 14px
+        span 
+          font-size: 10px
+  .title 
+    font-size: 14px
+    margin-top: 6px
+    margin-bottom: 8px
+  .flex 
+    margin-bottom: 10px
+  .star 
+    font-size: 12px
+    svg 
+      width: 14px
+      height: 14px
+  .reviews 
+    font-size: 12px
+  .slider-product 
+    .img 
+      img 
+        height: 156px
 </style>

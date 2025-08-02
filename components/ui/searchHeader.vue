@@ -20,7 +20,7 @@
   align-items: center
   justify-content: space-between
   width: 100%
-  padding: 12px 16px
+  padding: 10px 16px
   border-radius: 6px
 .searchInput 
   overflow: hidden
@@ -32,4 +32,24 @@
   letter-spacing: -0.32px
 .searchInput::placeholder 
   color: #939393
+@media (max-width: 768px)
+  .box 
+    position: relative
+    padding: 0 16px 0
+    margin-bottom: 20px
+    input 
+      background: #E7E9EC
+      border: 1px solid #DDE0E5
+      padding: 16px 43px
+      font-size: 14px
+      border-radius: 8px
+      transition: .3s all
+      &:focus 
+        border-color: var(--color-blue)
+        background: #fff
+    button 
+      position: absolute
+      left: 28px
+      top: 50%
+      transform: translateY(-50%)
 </style>

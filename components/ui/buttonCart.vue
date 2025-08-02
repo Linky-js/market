@@ -79,5 +79,14 @@ const addToCart = () => {
   svg 
     width: 24px
     height: auto
-
+@media (max-width: 768px)
+  .btn-text 
+    font-size: 12px
+  .btn 
+    max-width: 164px
+    width: 100%
+    height: 36px
+    svg 
+      width: 20px
+      height: 20px
 </style>

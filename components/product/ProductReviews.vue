@@ -551,4 +551,49 @@ const allReviewImages = computed(() => {
         font-weight: 500
         &:first-child 
           font-weight: 700
+@media (max-width: 1200px)
+  .wrap 
+    flex-direction: column
+  .right 
+    max-width: 100%
+    order: 0
+  .reviews 
+    max-width: 100%
+@media (max-width: 768px)
+  .wrap
+    gap: 8px
+    margin-top: 8px
+  .right 
+    padding: 16px
+    &__top 
+      margin-bottom: 0
+    &__check 
+      display: none
+  .reviews 
+    display: contents
+    padding: 0
+    &__all 
+      order: 1
+      padding: 16px
+      background: #fff
+      border-radius: 12px
+      margin-bottom: 0
+      &-head 
+        margin-bottom: 12px
+    &__list 
+      order: 2
+      gap: 8px
+    &__btn 
+      background: #fff
+      border-radius: 12px
+      padding: 16px
+      max-width: 100%
+      width: 100%
+      color: var(--color-blue)
+      path 
+        fill: var(--color-blue)
+  .rev 
+    padding: 20px 16px
+    background: #fff
+    border-radius: 12px
 </style>

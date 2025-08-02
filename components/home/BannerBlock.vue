@@ -33,4 +33,16 @@ const props = defineProps({
     height: 320px
     object-fit: cover
     border-radius: 8px
+@media (max-width: 1440px)
+  .banner 
+    padding: 24px
+@media (max-width: 768px)
+  .banner 
+    padding: 24px
+  .banner 
+    padding: 20px 16px
+    .block 
+      height: 210px
+    img 
+      height: 210px
 </style>

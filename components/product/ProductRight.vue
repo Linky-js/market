@@ -1,6 +1,7 @@
 <script setup>
 import buttonCart from '../ui/buttonCart.vue';
 const right = {
+  title: 'Пылесос Xiaomi DEERMA DX700 Белый',
   price: '5 864',
   newprice: '5 864',
   oldprice: '7 864',
@@ -10,10 +11,12 @@ const right = {
   punkt: '5 августа',
   company: 'Konchinata',
   star: '4.7',
+  reviews: '126'
 }
 </script>
 <template>
   <div class="right">
+    <div class="title">{{ right.title }}</div>
     <div class="wrap-price">
       <div v-if="!right.newprice" class="price">
         {{ right.price }} <span>₽</span>
@@ -61,12 +64,20 @@ const right = {
             fill="#EEBA00" />
         </svg>
         {{ right.star }}
+        <span>({{ right.reviews }} отзывов)</span>
       </div>
     </div>
   </div>
 </template>
 
 <style lang="sass" scoped>
+.title 
+  display: none
+  font-weight: 700
+  font-size: 16px 
+  line-height: 100%
+  letter-spacing: -0.02em
+  margin-bottom: 10px
 .right 
   max-width: calc(320px * 100% / 1296px)
   width: 100%
@@ -169,4 +180,41 @@ const right = {
   font-size: 14px
   letter-spacing: -0.02em
   font-weight: 500
+  span 
+    color: #A1A1A1
+@media (max-width: 1440px)
+  .newprice 
+    flex-wrap: wrap
+@media (max-width: 1200px)
+  .right 
+    max-width: calc(50% - 12px)
+@media (max-width: 768px)
+  .right 
+    max-width: 100%
+    order: 2
+    border-radius: 12px
+    padding: 11px 16px 19px
+    margin-top: 0
+    display: flex
+    flex-direction: column
+    margin-bottom: 8px
+  .title 
+    display: block
+    order: 1
+  .bot 
+    display: contents
+  .com 
+    order: 2
+    max-width: max-content
+    margin-bottom: 28px
+  .star
+    order: 0
+    margin-bottom: 10px
+  .wrap-price 
+    order: 3
+    margin-bottom: 8px
+  .btn 
+    order: 4
+  .del 
+    order: 5
 </style>

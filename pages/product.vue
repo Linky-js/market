@@ -12,6 +12,7 @@ const charakteristick = ref(false)
 const goCharakteristick = (event) => {
   charakteristick.value = event
 }
+
 </script>
 <template>
   <div class="product">
@@ -34,4 +35,15 @@ const goCharakteristick = (event) => {
     display: flex
     gap: 24px
     align-items: flex-start
+@media (max-width: 1440px)
+  .product 
+    padding: 36px 24px
+@media (max-width: 1200px)
+  .product__top 
+    flex-wrap: wrap
+@media (max-width: 768px)
+  .product 
+    padding: 0 0 8px
+    &__top 
+      gap: 0
 </style>

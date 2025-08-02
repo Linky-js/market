@@ -179,4 +179,17 @@ const products = [
   display: grid
   grid-template-columns: repeat(auto-fill, minmax(206px, 1fr))
   gap: 24px 12px
+@media (max-width: 1440px)
+  .wrap 
+    padding: 0 24px
+@media (max-width: 768px)
+  .wrap 
+    padding: 0
+  .like 
+    padding: 20px 16px 36px
+    h2 
+      margin-bottom: 16px
+  .products 
+    grid-template-columns: repeat(2, 1fr)
+    gap: 36px 6px
 </style>
