@@ -6,6 +6,7 @@
   --color-black: #232323;
   --color-blue: #118afb;
 }
+
 body {
   background: #f2f4f8;
   color: var(--color-black);
@@ -15,9 +16,11 @@ body {
 html, body {
   overflow-x: hidden;
 }
+
 a {
   cursor: pointer;
 }
+
 @font-face {
   font-family: Inter;
   src: url("../fonts/Inter24pt-BlackItalic.woff2") format("woff2"),
@@ -132,6 +135,7 @@ h2 {
   line-height: 30px;
   letter-spacing: -0.02em;
 }
+
 body.o-hidden {
   overflow: hidden;
 }
@@ -160,3 +164,24 @@ body {
     line-height: 100%;
   }
 }
+
+.btn__blue {
+  border-radius: 100px;
+  background: var(--Primary-Blue-600, #118AFB);
+  color: var(--Primary-White, #FFF);
+  text-align: center;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: -0.28px;
+  padding: 10px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+.btn__blue:hover {
+  background: var(--Primary-Blue-700, #0073DD);
+}
+

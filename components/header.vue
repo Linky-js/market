@@ -3,9 +3,10 @@ import { ref, onMounted } from "vue";
 import searchHeader from "./ui/searchHeader.vue";
 import IconHeader from "./ui/iconHeader.vue";
 import CatalogMenu from "./common/CatalogMenu.vue";
+import auth from "./auth/auth.vue";
 
 const loading = ref(true);
-
+const showAuth = ref(false)
 onMounted(() => {
   // Имитируем загрузку
   setTimeout(() => {
@@ -67,7 +68,7 @@ onUnmounted(() => {
       <div v-if="!isMobile" class="header__icons">
         <IconHeader :name="'shop'" :link="'/'" />
         <IconHeader :name="'whishlist'" :link="'/whishlist'" />
-        <IconHeader :name="'user'" :link="'/user'" />
+        <IconHeader @click="showAuth = true" :name="'user'"  />
       </div>
       <div v-if="isMobile" class="header__city">
         Выберите город
@@ -75,6 +76,7 @@ onUnmounted(() => {
     </div>
   </header>
   <CatalogMenu :open="isMenuOpen" @close="toggleMenu" />
+  <Auth v-if="showAuth" />
 </template>
 
 <style scoped lang="sass">
