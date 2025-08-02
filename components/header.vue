@@ -3,9 +3,10 @@ import { ref, onMounted } from "vue";
 import searchHeader from "./ui/searchHeader.vue";
 import IconHeader from "./ui/iconHeader.vue";
 import CatalogMenu from "./common/CatalogMenu.vue";
+import auth from "./auth/auth.vue";
 
 const loading = ref(true);
-
+const showAuth = ref(false)
 onMounted(() => {
   // Имитируем загрузку
   setTimeout(() => {
@@ -52,12 +53,13 @@ const toggleMenu = () => {
       <div class="flex items-center gap-4">
         <IconHeader :name="'shop'" :link="'/'" />
         <IconHeader :name="'whishlist'" :link="'/whishlist'" />
-        <IconHeader :name="'user'" :link="'/user'" />
+        <IconHeader @click="showAuth = true" :name="'user'"  />
       </div>
     </div>
   </header>
 
   <CatalogMenu :open="isMenuOpen" @close="toggleMenu" />
+  <Auth v-if="showAuth" />
 </template>
 
 <style scoped lang="sass">

@@ -1,7 +1,6 @@
 <script setup>
-import { Link } from "#components";
-import { ref, onMounted, defineProps } from "vue";
-
+import { ref, defineEmits, defineProps } from "vue";
+const emit = defineEmits(["click"]);
 const props = defineProps({
   name: String,
   link: String,
@@ -10,6 +9,9 @@ const props = defineProps({
     default: "#232323",
   },
 });
+const goAuth = () => {
+  emit("click");
+}
 </script>
 
 <template>
@@ -48,6 +50,7 @@ const props = defineProps({
     </svg>
     <svg
       v-else
+      @click="goAuth"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"

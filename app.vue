@@ -4,7 +4,6 @@ const user = useCookie('user');
 
 onMounted(() => {
   console.log(user.value);
-  
 })
 </script>
 <template>
