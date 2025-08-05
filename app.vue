@@ -1,6 +1,8 @@
 <script setup>
-import { ref, onMounted } from "vue";
-const user = useCookie('user');
+import { useAuthCheck } from '@/composables/useAuthCheck'
+import { useFetchUser } from '@/composables/useFetchUser'
+import { ref, onMounted } from 'vue'
+const user = ref(null)
 
 const isMobile = ref(false)
 
@@ -8,10 +10,14 @@ const checkWidth = () => {
   isMobile.value = window.innerWidth <= 768
 }
 
-onMounted(() => {
+onMounted(async () => {
   console.log(user.value);
   checkWidth()
   window.addEventListener('resize', checkWidth)
+  const isValid = await useAuthCheck()
+  if (isValid) {
+    user.value = await useFetchUser()
+  }
 })
 
 onUnmounted(() => {

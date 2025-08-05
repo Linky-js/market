@@ -1,21 +1,74 @@
 <script setup>
 import multiInput from "../ui/multiInput.vue";
+import passinput from "../ui/passinput.vue";
+import resendtimer from "../ui/resendtimer.vue";
 import { ref } from "vue";
 import { useStore } from "~/stores/index";
 
 const store = useStore();
 const apiDomain = store.apiDomain;
-const phone = ref("");
+const step = ref("start");
 
+const soglasie = ref(null);
+const soglasieError = ref(false);
+const phone = ref("");
+const email = ref("");
+const login = ref("");
+const recordId = ref(null);
+
+const password = ref("");
+const code = ref("");
 const typeLogin = ref("phone");
+
+const shake = (selectorOrElement) => {
+  const el =
+    typeof selectorOrElement === "string"
+      ? document.querySelector(selectorOrElement)
+      : selectorOrElement;
+
+  if (!el) return;
+
+  el.classList.add("brrr");
+  setTimeout(() => el.classList.remove("brrr"), 1000);
+};
 const goCode = async () => {
+  const checkbox = soglasie.value;
+  const label = checkbox.nextElementSibling;
+
+  if (!checkbox.checked) {
+    shake(label);
+    return;
+  }
+
+  const isEmpty = (val) => val?.trim?.() === "";
+
+  if (typeLogin.value === "phone" && isEmpty(phone.value)) {
+    shake(".input_phone");
+    return;
+  }
+
+  if (typeLogin.value === "email" && isEmpty(email.value)) {
+    shake(".input_email");
+    return;
+  }
+
+  if (typeLogin.value === "pass") {
+    if (isEmpty(login.value)) {
+      shake(".input_login");
+      return;
+    }
+    if (isEmpty(password.value)) {
+      shake(".input_pass");
+      return;
+    }
+  }
+
   let cleanedPhone = phone.value.replace(/[^\d+]/g, "");
 
   if (cleanedPhone.startsWith("8")) {
     cleanedPhone = "+7" + cleanedPhone.slice(1);
   }
-
-  console.log("Очищенный номер:", cleanedPhone);
+  phone.value = cleanedPhone;
 
   try {
     const checkResponse = await $fetch(apiDomain + "/api/auth/check_user", {
@@ -35,36 +88,41 @@ const goCode = async () => {
       checkResponse.register === false &&
       checkResponse.command === "register to phone"
     ) {
-      console.log("Регистрируем пользователя...");
-
-      const registerResponse = await $fetch(
-        apiDomain +
-          "/api/auth/phone_registration_confirmed?phone_number=" +
-          encodeURIComponent(cleanedPhone),
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-          },
-        }
-      );
-
-      console.log("Результат регистрации:", registerResponse);
-
-      const activationCode = registerResponse.activation_code;
-      const password = registerResponse.password;
-      if (registerResponse.ok) {
-        goRegister(registerResponse.activation_code, registerResponse.record_id, cleanedPhone);
-      }
-
-      console.log("Код активации:", activationCode);
-      console.log("Пароль:", password);
+      await goValueCode(cleanedPhone);
     }
   } catch (error) {
     console.error("Ошибка при выполнении запроса:", error);
   }
 };
-const goRegister = async (code, record_id, phone) => {
+const goValueCode = async (cleanedPhone) => {
+  console.log("Регистрируем пользователя...");
+
+  const registerResponse = await $fetch(
+    apiDomain +
+      "/api/auth/phone_registration_confirmed?phone_number=" +
+      encodeURIComponent(cleanedPhone),
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  );
+  console.log("Результат регистрации:", registerResponse);
+  const activationCode = registerResponse.activation_code;
+  code.value = activationCode;
+  if (registerResponse.ok) {
+    step.value = "code";
+    recordId.value = registerResponse.record_id;
+    // goRegister(
+    //   registerResponse.activation_code,
+    //   registerResponse.record_id,
+    //   cleanedPhone
+    // );
+  }
+  console.log("Код активации:", activationCode);
+};
+const goRegister = async () => {
   try {
     const registerResponse = await $fetch(
       apiDomain + "/api/auth/verify_phone_registration",
@@ -74,25 +132,42 @@ const goRegister = async (code, record_id, phone) => {
           Accept: "application/json",
         },
         body: {
-          phone_number: phone,
-          code: code,
-          record_id: record_id,
+          phone_number: phone.value,
+          code: code.value,
+          record_id: recordId.value,
         },
-        credentials: 'include',
+        credentials: "include",
       }
     );
-   console.log("Результат регистрации:", registerResponse);
-   
+    console.log("Результат регистрации:", registerResponse);
+    if (registerResponse.ok) {
+      const accessToken = useCookie("access_token");
+      const refreshToken = useCookie("refresh_token");
+
+      accessToken.value = registerResponse.access_token;
+      refreshToken.value = registerResponse.refresh_token;
+    }
   } catch (error) {
     console.error("Ошибка при выполнении запроса:", error);
   }
 };
+const handleResend = () => {
+  goCode();
+};
 </script>
 <template>
   <div class="modal">
-    <div class="modal__content">
+    <div v-if="step == 'start'" class="modal__content">
       <div class="modal__head">
-        <div class="modal__title">Введите номер телефона</div>
+        <div class="modal__title">
+          {{
+            typeLogin == "phone"
+              ? "Введите номер телефон"
+              : typeLogin == "pass"
+              ? "Ввести логин и пароль"
+              : "Введите email"
+          }}
+        </div>
         <div v-if="typeLogin == 'phone'" class="modal__description">
           Мы отправим код или позвоним. Отвечать на звонок не нужно. Код может
           прийти на почту или в СМС
@@ -105,36 +180,69 @@ const goRegister = async (code, record_id, phone) => {
       <form class="modal__form">
         <multi-input
           v-if="typeLogin == 'phone'"
+          class="input_phone"
           placeholder="+7 (___) ___-__-__"
           type="phone"
           v-model="phone"
         />
         <multi-input
+          class="input_email"
           v-if="typeLogin == 'email'"
           placeholder="Введите email"
           type="email"
+          v-model="email"
+        />
+        <multi-input
+          v-if="typeLogin == 'pass'"
+          class="input_login"
+          placeholder="Введите логин"
+          type="text"
+          v-model="login"
+        />
+        <passinput
+          v-if="typeLogin == 'pass'"
+          class="input_pass"
+          placeholder="Введите пароль"
+          v-model="password"
         />
         <a @click="goCode" class="btn__blue">Продолжить</a>
-        <input type="checkbox" id="soglasie" />
+        <input type="checkbox" id="soglasie" ref="soglasie" />
         <label class="label__soglasie" for="soglasie"
           >Соглашаюсь с правилами пользования торговой площадой и
           возврата</label
         >
       </form>
-      <div
-        v-if="typeLogin == 'phone'"
-        @click="typeLogin = 'email'"
-        class="modal__description link"
-      >
-        Войти с помощью email
+
+      <div class="modal__description link">
+        <span v-if="typeLogin == 'email'" @click="typeLogin = 'phone'"
+          >Войти с помощью телефона</span
+        >
+        <span v-if="typeLogin == 'phone'" @click="typeLogin = 'email'"
+          >Войти с помощью email</span
+        >
       </div>
-      <div
-        v-if="typeLogin == 'email'"
-        @click="typeLogin = 'phone'"
-        class="modal__description link"
-      >
-        Войти с помощью телефона
+      <div class="modal__description link">
+        <span @click="typeLogin = 'pass'">Ввесть логин и пароль</span>
       </div>
+    </div>
+    <div v-if="step == 'code'" class="modal__content">
+      <div class="modal__head">
+        <div class="modal__title">Введите код из сообщения</div>
+        <div class="modal__description">
+          Отправили код на ваш номер телефона, если сообщения не пришло, нажмите
+          “Отправить новое собщение”
+        </div>
+      </div>
+      <form class="modal__form">
+        <multi-input
+          class="input_code"
+          placeholder="Введите код"
+          type="code"
+          v-model="code"
+        />
+        <a @click="goRegister" class="btn__blue">Войти</a>
+        <resendtimer @resend="handleResend" />
+      </form>
     </div>
   </div>
 </template>
