@@ -156,7 +156,7 @@ const handleResend = () => {
 };
 </script>
 <template>
-  <div class="modal">
+  <div class="modal" @click.self="$emit('close')">
     <div v-if="step == 'start'" class="modal__content">
       <div class="modal__head">
         <div class="modal__title">

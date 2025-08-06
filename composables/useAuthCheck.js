@@ -1,5 +1,5 @@
 // composables/useAuthCheck.js
-import jwtDecode from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode'
 import { useCookie, useFetch } from '#app'
 
 export const useAuthCheck = async () => {

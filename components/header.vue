@@ -76,7 +76,7 @@ onUnmounted(() => {
     </div>
   </header>
   <CatalogMenu :open="isMenuOpen" @close="toggleMenu" />
-  <Auth v-if="showAuth" />
+  <Auth v-if="showAuth" @close="showAuth = false" />
 </template>
 
 <style scoped lang="sass">
