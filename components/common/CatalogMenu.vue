@@ -3041,6 +3041,14 @@ const emit = defineEmits(['close'])
     overflow-y: auto
     height: 100%
     max-height: 628px
+    &::-webkit-scrollbar 
+      width: 6px
+    &::-webkit-scrollbar-track 
+      background: #fff     
+    &::-webkit-scrollbar-thumb 
+      background-color: #E7E9EC
+      border-radius: 20px 
+      border: none
     h2 
       margin-bottom: 32px
   &__list 
