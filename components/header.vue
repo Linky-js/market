@@ -37,6 +37,7 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', checkWidth)
 })
+
 </script>
 
 <template>

@@ -11,9 +11,9 @@ body {
   background: #f2f4f8;
   color: var(--color-black);
   font-family: "Inter", sans-serif;
-  
 }
-html, body {
+html,
+body {
   overflow-x: hidden;
 }
 
@@ -152,23 +152,27 @@ body {
   border-radius: 50%;
 }
 .sl-pag-bullet-active {
-  background: #9B9B9B;
+  background: #9b9b9b;
 }
 
 @media (max-width: 768px) {
   body {
-    padding-top: 54px;
+    padding-top: 0px;
+    padding-bottom: 120px;
   }
   h2 {
     font-size: 18px;
     line-height: 100%;
   }
+  .mt-54 {
+    margin-top: 54px;
+  }
 }
 
 .btn__blue {
   border-radius: 100px;
-  background: var(--Primary-Blue-600, #118AFB);
-  color: var(--Primary-White, #FFF);
+  background: var(--Primary-Blue-600, #118afb);
+  color: var(--Primary-White, #fff);
   text-align: center;
   font-family: Inter;
   font-size: 14px;
@@ -182,26 +186,48 @@ body {
   transition: all 0.3s ease;
 }
 .btn__blue:hover {
-  background: var(--Primary-Blue-700, #0073DD);
+  background: var(--Primary-Blue-700, #0073dd);
 }
 
-.brrr{
+.brrr {
   color: red !important;
   animation: shake 1s ease;
 }
 @keyframes shake {
-  0% { transform: translateX(0); }
-  10% { transform: translateX(-3px); }
-  20% { transform: translateX(3px); }
-  30% { transform: translateX(-3px); }
-  40% { transform: translateX(3px); }
-  50% { transform: translateX(-2px); }
-  60% { transform: translateX(2px); }
-  70% { transform: translateX(-1px); }
-  80% { transform: translateX(1px); }
-  90% { transform: translateX(-1px); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(0);
+  }
+  10% {
+    transform: translateX(-3px);
+  }
+  20% {
+    transform: translateX(3px);
+  }
+  30% {
+    transform: translateX(-3px);
+  }
+  40% {
+    transform: translateX(3px);
+  }
+  50% {
+    transform: translateX(-2px);
+  }
+  60% {
+    transform: translateX(2px);
+  }
+  70% {
+    transform: translateX(-1px);
+  }
+  80% {
+    transform: translateX(1px);
+  }
+  90% {
+    transform: translateX(-1px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
-.brrr .input_multi{
+.brrr .input_multi {
   border: 1px solid red !important;
 }

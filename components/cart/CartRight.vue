@@ -1,8 +1,21 @@
 <script setup>
+const isMobile = ref(false)
 
+const checkWidth = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  checkWidth()
+  window.addEventListener('resize', checkWidth)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkWidth)
+})
 </script>
 <template>
-  <div class="box">
+  <div v-if="!isMobile" class="box">
     <div class="right">
       <div class="right__head">
         <h2>Ваш заказ</h2>
@@ -26,6 +39,16 @@
         <h2>Итого</h2>
         <p>23 912 <span>₽</span></p>
       </div>
+    </div>
+    <NuxtLink to="/" class="btn">Оформить заказ</NuxtLink>
+  </div>
+  <div v-else class="mob">
+    <div class="mob__left">
+      <div class="mob__price">
+        <div>23 912 <span>₽</span></div>
+        <div>36 769 <span>₽</span></div>
+      </div>
+      <div class="mob__col">12 товаров</div>
     </div>
     <NuxtLink to="/" class="btn">Оформить заказ</NuxtLink>
   </div>
@@ -111,4 +134,51 @@
   transition: .3s all
   &:hover 
     background: #0073DD
+.mob 
+  position: fixed
+  bottom: 56px
+  box-shadow: 0px 0.5px 0px 0px rgba(0, 0, 0, 0.25)
+  z-index: 2
+  width: 100%
+  background: #fff
+  border-radius: 12px 12px 0 0
+  padding: 10px 16px
+  display: flex
+  align-items: center
+  justify-content: space-between
+  .btn 
+    font-size: 14px
+    line-height: 20px
+    padding: 10px 40px
+    max-width: max-content
+  &__col 
+    color: #838383
+    font-size: 9px
+    line-height: 120%
+  &__price 
+    display: flex
+    align-items: center
+    gap: 7px
+    margin-bottom: 2px
+    div
+      &:first-child 
+        font-size: 18px
+        line-height: 100%
+        color: #FB4711
+        font-weight: 700
+        span 
+          font-size: 14px
+          font-weight: 600
+      &:last-child 
+        font-size: 14px
+        line-height: 100%
+        color: #A1A1A1
+        font-weight: 500
+        span 
+          font-size: 10px
+          line-height: 100%
+
+@media (max-width: 991px)
+  .box 
+    max-width: 300px
 </style>
