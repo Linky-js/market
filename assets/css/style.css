@@ -16,7 +16,9 @@ html,
 body {
   overflow-x: hidden;
 }
-
+* {
+  letter-spacing: -0.02em;
+}
 a {
   cursor: pointer;
 }
@@ -230,4 +232,27 @@ body {
 }
 .brrr .input_multi {
   border: 1px solid red !important;
+}
+
+.inp {
+  padding: 12px;
+  background: #F2F4F8;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 20px;
+  border: 1px solid #F2F4F8;
+  width: 100%;
+  outline: none;
+  transition: all 0.3s ease;
+}
+.inp:focus {
+  border: 1px solid #118AFB;
+}
+.inp::-moz-placeholder {
+  color: #A1A1A1;
+}
+.inp::placeholder {
+  color: #A1A1A1;
 }
