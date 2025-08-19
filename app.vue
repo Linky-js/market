@@ -2,12 +2,25 @@
 import { useAuthCheck } from '@/composables/useAuthCheck'
 import { useFetchUser } from '@/composables/useFetchUser'
 import { ref, onMounted } from 'vue'
+import { useStore } from '@/stores/index'
+
+const store = useStore()
 const user = ref(null)
 
 const isMobile = ref(false)
 
 const checkWidth = () => {
   isMobile.value = window.innerWidth <= 768
+}
+const getCategories = async () => {
+  try {
+    const response = await fetch('https://api.skynet-cloud.ru/api/catalog/categories/simple-tree');
+    const json = await response.json();
+    store.setCategories(json);
+
+  } catch (error) {
+    console.error('Ошибка при получении категорий', error);
+  }
 }
 
 onMounted(async () => {
@@ -18,6 +31,7 @@ onMounted(async () => {
   if (isValid) {
     user.value = await useFetchUser()
   }
+  getCategories();
 })
 
 onUnmounted(() => {

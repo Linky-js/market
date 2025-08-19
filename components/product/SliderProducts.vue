@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps } from 'vue';
-import ProductBlock from '../common/ProductBlock.vue';
+// import ProductBlock from '../common/ProductBlock.vue';
 
 import { ref } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
@@ -164,8 +164,8 @@ const products = [
     <div class="products">
       <Swiper class="slider" :slides-per-view="'auto'" :space-between="12" :breakpoints="{0: { spaceBetween: 6}, 768: { spaceBetween: 12 }}">
         <SwiperSlide v-for="product in products" :key="product.title">
-          <ProductBlock class="slider-product" :title="product.title" :image="product.image" :price="product.price"
-            :newprice="product.newprice" :discount="product.discount" :star="product.star" :reviews="product.reviews" />
+          <!-- <ProductBlock class="slider-product" :title="product.title" :image="product.image" :price="product.price"
+            :newprice="product.newprice" :discount="product.discount" :star="product.star" :reviews="product.reviews" /> -->
         </SwiperSlide>
       </Swiper>
     </div>

@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps } from 'vue';
-import ProductBlock from '../common/ProductBlock.vue';
+// import ProductBlock from '../common/ProductBlock.vue';
 
 const props = defineProps({
   title: {
@@ -157,9 +157,9 @@ const products = [
     <div class="like">
       <h2 v-if="props.title">{{ props.title }}</h2>
       <div class="products">
-        <ProductBlock v-for="product in products" :key="product.title" :title="product.title" :image="product.image"
+        <!-- <ProductBlock v-for="product in products" :key="product.title" :title="product.title" :image="product.image"
           :price="product.price" :newprice="product.newprice" :discount="product.discount" :star="product.star"
-          :reviews="product.reviews" />
+          :reviews="product.reviews" /> -->
       </div>
     </div>
   </div>

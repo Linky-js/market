@@ -3,9 +3,9 @@ import multiInput from "../ui/multiInput.vue";
 import passinput from "../ui/passinput.vue";
 import resendtimer from "../ui/resendtimer.vue";
 import { ref } from "vue";
-import { useStore } from "~/stores/index";
+import { useStore } from '@/stores/index'
 
-const store = useStore();
+const store = useStore()
 const apiDomain = store.apiDomain;
 const step = ref("start");
 

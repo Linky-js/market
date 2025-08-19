@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@nuxt/image": "^1.10.0",
+    "@pinia/nuxt": "^0.11.2",
+    "@vueuse/core": "^13.7.0",
     "imask": "^7.6.1",
     "jwt-decode": "^2.2.0",
     "nuxt": "^3.17.7",

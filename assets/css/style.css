@@ -205,3 +205,31 @@ body {
 .brrr .input_multi{
   border: 1px solid red !important;
 }
+.swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet{
+  margin: 0 3px;
+}
+.swiper-pagination-bullets.swiper-pagination-horizontal {
+  bottom: -20px;
+}
+.swiper-pagination {
+  pointer-events: auto;
+}
+.custom-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  margin-top: 8px;
+}
+
+.custom-pagination button {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: #c9c9d1;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.custom-pagination button.active {
+  background: #118AFB;
+}
