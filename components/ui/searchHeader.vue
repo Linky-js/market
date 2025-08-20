@@ -32,11 +32,12 @@
   letter-spacing: -0.32px
 .searchInput::placeholder 
   color: #939393
+.box-mb-20 
+  margin-bottom: 20px
 @media (max-width: 768px)
   .box 
     position: relative
     padding: 0 16px 0
-    margin-bottom: 20px
     input 
       background: #E7E9EC
       border: 1px solid #DDE0E5

@@ -2,6 +2,7 @@
 import HeadCatalog from '~/components/catalog/HeadCatalog.vue';
 import Filter from '~/components/catalog/Filter.vue';
 import ProductsCatalog from '~/components/catalog/ProductsCatalog.vue';
+import searchHeader from '~/components/ui/searchHeader.vue';
 import { ref, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -42,13 +43,25 @@ watch(
     }
   }
 );
+const isMobile = ref(false)
+const checkWidth = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+onMounted(() => {
+  checkWidth()
+  window.addEventListener('resize', checkWidth)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', checkWidth)
+})
 </script>
 
 <template>
   <div class="catalog">
+    <searchHeader v-if="isMobile" :class="{ 'box-mb-20': isMobile }" />
     <HeadCatalog />
     <div class="catalog__content">
-      <Filter />
+      <Filter v-if="!isMobile"/>
       <ProductsCatalog @updatePage="updatePage" :products="products" />
     </div>
   </div>
@@ -59,4 +72,11 @@ watch(
   &__content 
     display: flex
     gap: 24px
+@media (max-width: 1440px)
+  .catalog 
+    padding: 24px
+@media (max-width: 768px)
+  .catalog 
+    padding: 0
+    padding-top: 16px
 </style>

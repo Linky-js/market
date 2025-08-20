@@ -1,6 +1,11 @@
 <script setup>
+import CatalogMenu from './common/CatalogMenu.vue';
 import { NuxtLink } from '#components';
-
+const isMenuOpen = ref(false)
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+  document.body.classList.toggle('o-hidden', isMenuOpen.value)
+}
 
 </script>
 <template>
@@ -12,7 +17,7 @@ import { NuxtLink } from '#components';
           fill="#C9C9D1" />
       </svg>
     </NuxtLink>
-    <button>
+    <button class="footer__catalog" :class="{ active: isMenuOpen }" @click="toggleMenu">
       <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M16.5 3.5C18.9813 3.5 21 5.51869 21 8V16C21 18.4813 18.9813 20.5 16.5 20.5H8.5C6.01869 20.5 4 18.4813 4 16V8C4 5.51869 6.01869 3.5 8.5 3.5H16.5ZM16.5 2H8.5C5.18629 2 2.5 4.68629 2.5 8V16C2.5 19.3137 5.18629 22 8.5 22H16.5C19.8137 22 22.5 19.3137 22.5 16V8C22.5 4.68629 19.8137 2 16.5 2Z"
@@ -20,6 +25,12 @@ import { NuxtLink } from '#components';
         <path d="M17.4727 9H7.47266V10.5H17.4727V9Z" fill="#C9C9D1" />
         <path d="M17.4727 13.5H7.47266V15H17.4727V13.5Z" fill="#C9C9D1" />
       </svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M16 2H8C4.68628 2 2 4.68628 2 8V16C2 19.3137 4.68628 22 8 22H16C19.3137 22 22 19.3137 22 16V8C22 4.68628 19.3137 2 16 2ZM16.9722 15H6.97223V13.5H16.9722V15ZM16.9722 10.5H6.97223V9H16.9722V10.5Z"
+          fill="#118AFB" />
+      </svg>
+
     </button>
     <NuxtLink to="/">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,7 +44,7 @@ import { NuxtLink } from '#components';
     </NuxtLink>
     <NuxtLink to="/">
       <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        
+
         <path data-figma-bg-blur-radius="6"
           d="M17 4C19.5523 4 21.5 5.94772 21.5 8.5C21.5 10.3141 20.5157 11.9822 19.0947 13.6426C17.6667 15.3111 15.6409 17.1444 13.2842 19.2783L13.207 19.3574L12.5 20.0645L11.793 19.3574L11.7148 19.2783C9.35839 17.1446 7.33315 15.311 5.90527 13.6426C4.48429 11.9822 3.5 10.3141 3.5 8.5C3.5 5.94772 5.44772 4 8 4C9.6852 4 11.3424 4.93355 12.1914 6.36035H12.8164C13.6599 4.93169 15.3178 4 17 4Z"
           stroke="#C9C9D1" stroke-width="2" />
@@ -53,6 +64,7 @@ import { NuxtLink } from '#components';
       </svg>
     </NuxtLink>
   </footer>
+  <CatalogMenu :open="isMenuOpen" @close="toggleMenu" />
 </template>
 
 
@@ -67,5 +79,14 @@ import { NuxtLink } from '#components';
   display: flex
   align-items: center
   justify-content: space-between
-  z-index: 5
+  z-index: 6
+  &__catalog 
+    svg:last-child
+      display: none
+    &.active
+      svg:first-child
+        display: none
+      svg:last-child
+        display: block
+
 </style>

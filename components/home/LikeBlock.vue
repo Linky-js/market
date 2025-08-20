@@ -190,6 +190,6 @@ const products = [
     h2 
       margin-bottom: 16px
   .products 
-    grid-template-columns: repeat(2, 1fr)
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr))
     gap: 36px 6px
 </style>

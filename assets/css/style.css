@@ -254,7 +254,7 @@ body {
 }
 .inp::placeholder {
   color: #A1A1A1;
-
+}
 .swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet{
   margin: 0 3px;
 }
