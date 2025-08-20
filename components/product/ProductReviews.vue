@@ -551,9 +551,29 @@ const allReviewImages = computed(() => {
         font-weight: 500
         &:first-child 
           font-weight: 700
+.reviews-page 
+  margin-top: 0
+  flex-direction: row-reverse
+  .reviews 
+    background: none
+    display: flex
+    flex-direction: column
+    gap: 24px
+    padding: 0
+    &__all
+      background: #fff
+      border-radius: 12px
+      padding: 24px
+      margin-bottom: 0
+  .rev 
+    background: #fff
+    border-radius: 12px
+    padding: 24px
 @media (max-width: 1200px)
   .wrap 
     flex-direction: column
+  .reviews-page 
+    flex-direction: column-reverse
   .right 
     max-width: 100%
     order: 0
@@ -596,4 +616,13 @@ const allReviewImages = computed(() => {
     padding: 20px 16px
     background: #fff
     border-radius: 12px
+  .reviews-page 
+    padding: 0
+    margin-top: 0
+    .reviews__all
+      padding: 16px
+    .reviews 
+      gap: 8px
+    .rev 
+      padding: 20px 16px
 </style>
