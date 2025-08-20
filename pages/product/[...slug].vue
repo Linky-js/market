@@ -26,22 +26,19 @@ const { data: productResponse } = await useAsyncData(
     )
 );
 
-const groupProducts = ref([]);
-if (productResponse.value?.is_group) {
-  const { data: groupResponse } = await useAsyncData(
-    `group-${productResponse.value.id}`, 
-    () =>
-      $fetch(
-        `https://api.skynet-cloud.ru/api/catalog/groups/${productResponse.value.id}`
-      )
-  );
-  groupProducts.value = groupResponse.value || [];
-}
+// const groupProducts = ref([]);
+// if (productResponse.value?.is_group) {
+//   const { data: groupResponse } = await useAsyncData(
+//     `group-${productResponse.value.id}`, 
+//     () =>
+//       $fetch(
+//         `https://api.skynet-cloud.ru/api/catalog/groups/${productResponse.value.id}`
+//       )
+//   );
+//   groupProducts.value = groupResponse.value || [];
+// }
 onMounted(() => {
   console.log('Товар:', productResponse.value);
-  if (groupProducts.value.length) {
-    console.log('Групповой товар:', groupProducts.value);
-  }
 })
 
 </script>

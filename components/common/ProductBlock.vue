@@ -23,6 +23,10 @@ function onMouseMove(e) {
   const targetIndex = Math.floor(percent * slidesCount);
   swiperRef.value.slideTo(targetIndex);
 }
+function onMouseLeave() {
+  if (!swiperRef.value) return;
+  swiperRef.value.slideTo(0)
+}
 const goToSlide = (index) => {
   if (swiperRef.value) {
     swiperRef.value.slideTo(index);
@@ -59,6 +63,7 @@ watch(
           @swiper="setSwiper"
           class="slider"
           @mousemove="onMouseMove"
+          @mouseleave="onMouseLeave"
         >
           <SwiperSlide v-for="image in props.product.all_images" :key="image">
             <NuxtImg :src="image.image_url" format="webp" />
