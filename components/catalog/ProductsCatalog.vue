@@ -1,159 +1,59 @@
 <script setup>
 import ProductBlock from '../common/ProductBlock.vue';
+import { defineProps, watch, ref, onMounted, nextTick, defineEmits } from 'vue';
+import { useIntersectionObserver } from '@vueuse/core'; 
 
-const products = [
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    image: '/img/product.jpg',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
+const emit = defineEmits(['updatePage']);
+const props = defineProps({
+  products: {
+    type: Array,
+    required: false,
+    default: () => []
+  }
+});
+
+const products = ref([]);
+const loadMoreTrigger = ref(null);
+
+watch(
+  () => props.products,
+  (newValue) => {
+    if (newValue) {
+      products.value = newValue;
+    }
   },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    newprice: '4 999',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-  {
-    title: 'Виртуальные очки VR Shinecon SC-G13 с пультом ДУ/ 3D устройство для просмотра фильмов и игр на телефоне',
-    price: '6 769',
-    discount: '10%',
-    star: '4.7',
-    reviews: '11',
-    image: '/img/product.jpg'
-  },
-]
+  { immediate: true }
+);
+
+onMounted(() => {
+  nextTick(() => {
+    if (loadMoreTrigger.value) {
+      useIntersectionObserver(
+        loadMoreTrigger,
+        ([{ isIntersecting }]) => {
+          if (isIntersecting) {
+            emit('updatePage');
+          }
+        },
+        { threshold: 0.5 }
+      );
+    }
+  });
+});
 </script>
 
 <template>
     <div class="like">
       <div class="products">
-        <ProductBlock v-for="product in products" :key="product.title" :title="product.title" :image="product.image"
-          :price="product.price" :newprice="product.newprice" :discount="product.discount" :star="product.star"
-          :reviews="product.reviews" />
+        <ProductBlock v-for="product in props.products" :key="product.title" :product="product" />
+        <div ref="loadMoreTrigger" class="load-more-trigger"></div>
       </div>
     </div>
 </template>
 
 <style lang="sass" scoped>
+.load-more-trigger 
+  height: 1px
 
 .like 
   background: #fff
@@ -166,6 +66,7 @@ const products = [
   display: grid
   grid-template-columns: repeat(auto-fill, minmax(206px, 1fr))
   gap: 24px 12px
+  
 @media (max-width: 768px)
   .like 
     padding: 20px 16px 36px

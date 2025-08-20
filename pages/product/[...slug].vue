@@ -7,11 +7,39 @@ import ProductAbout from '~/components/product/ProductAbout.vue';
 import SliderProducts from '~/components/product/SliderProducts.vue';
 import ProductReviews from '~/components/product/ProductReviews.vue';
 import LikeBlock from '~/components/home/LikeBlock.vue';
+import { onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
 
 const charakteristick = ref(false)
 const goCharakteristick = (event) => {
   charakteristick.value = event
 }
+
+const { data: productResponse } = await useAsyncData(
+  `product-${route.params.slug[0]}`,
+  () =>
+    $fetch(
+      `https://api.skynet-cloud.ru/api/catalog/products/full-details/slug/${route.params.slug[0]}`
+    )
+);
+
+// const groupProducts = ref([]);
+// if (productResponse.value?.is_group) {
+//   const { data: groupResponse } = await useAsyncData(
+//     `group-${productResponse.value.id}`, 
+//     () =>
+//       $fetch(
+//         `https://api.skynet-cloud.ru/api/catalog/groups/${productResponse.value.id}`
+//       )
+//   );
+//   groupProducts.value = groupResponse.value || [];
+// }
+onMounted(() => {
+  console.log('Товар:', productResponse.value);
+})
 
 </script>
 <template>

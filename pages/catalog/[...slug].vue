@@ -2,33 +2,54 @@
 import HeadCatalog from '~/components/catalog/HeadCatalog.vue';
 import Filter from '~/components/catalog/Filter.vue';
 import ProductsCatalog from '~/components/catalog/ProductsCatalog.vue';
-import { ref, onMounted, watchEffect  } from 'vue';
+import { ref, watch, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
+const route = useRoute();
+const router = useRouter();
 
-const { data: response, error } = await useAsyncData('products', () =>
-  $fetch('https://api.skynet-cloud.ru/api/catalog/products_with_images/1')
-)
+const page = ref(Number(route.query.page) || 1);
 
-const products = ref([])
+const { data: response, refresh } = await useAsyncData(
+  `products-${route.params.slug[0]}-page-${page.value}`, // ключ как строка
+  () =>
+    $fetch(
+      `https://api.skynet-cloud.ru/api/catalog/products/by-category/slug/${route.params.slug[0]}?page=${page.value}&page_size=60`
+    )
+);
 
+const products = ref(response.value?.items || []);
 
-watchEffect(() => {
-  if (response.value?.items) {
-    products.value = response.value.items
-    console.log('Загруженные продукты:', products.value)
+const updatePage = async (newPage) => {
+  page.value++;
+
+  // router.replace({
+  //   query: { ...route.query, page: page.value }
+  // });
+
+  const res = await $fetch(
+    `https://api.skynet-cloud.ru/api/catalog/products/by-category/slug/${route.params.slug[0]}?page=${page.value}&page_size=60`
+  );
+
+  products.value = [...products.value, ...res.items];
+};
+
+watch(
+  () => route.query.page,
+  (newPage) => {
+    if (newPage && Number(newPage) !== page.value) {
+      updatePage(Number(newPage));
+    }
   }
-
-  if (error.value) {
-    console.error('Ошибка при загрузке продуктов:', error.value)
-  }
-})
+);
 </script>
+
 <template>
   <div class="catalog">
     <HeadCatalog />
     <div class="catalog__content">
       <Filter />
-      <ProductsCatalog />
+      <ProductsCatalog @updatePage="updatePage" :products="products" />
     </div>
   </div>
 </template>

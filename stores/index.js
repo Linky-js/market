@@ -5,7 +5,6 @@ export const useStore = defineStore('user', () => {
   const user = ref({
     id: false,
     username: 'guest',
-    bearer: '',
     email: '',
     name: '',
     isLogged: false,
@@ -14,6 +13,8 @@ export const useStore = defineStore('user', () => {
   const refreshToken = ref('')
   const accessToken = ref('')
   const apiDomain = ref('https://api.skynet-cloud.ru')
+  const categories = ref([])
+
 
   const isLoggedIn = computed(() => user.value.isLogged)
 
@@ -24,6 +25,12 @@ export const useStore = defineStore('user', () => {
       isLogged: true,
     }
     accessToken.value = data.bearer || ''
+  }
+  function setCategories(data) {
+    categories.value = data
+  }
+  function getCategories() {
+    return categories.value
   }
 
   function logout() {
@@ -45,7 +52,10 @@ export const useStore = defineStore('user', () => {
     refreshToken,
     accessToken,
     apiDomain,
+    categories,
     setUser,
     logout,
+    setCategories,
+    getCategories
   }
 })
