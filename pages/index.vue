@@ -22,7 +22,7 @@ onUnmounted(() => {
 </script>
 <template>
   <BannerBlock class="mt-54" image="/img/banner.jpg"/>
-  <searchHeader v-if="isMobile" />
+  <searchHeader v-if="isMobile" :class="{ 'box-mb-20': isMobile }" />
   <LikeBlock :title="'Может понравиться'" />
   <BannerBlock image="/img/banner.jpg"/>
   <LikeBlock />

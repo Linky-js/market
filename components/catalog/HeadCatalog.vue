@@ -1,5 +1,21 @@
 <script setup>
+import { Swiper, SwiperSlide } from 'swiper/vue'
+
+import 'swiper/css'
+
 const tags = ['Брюки', 'Верхняя одежда', 'Джемперы', 'Пальто', 'Юбки классические', 'Брюки со стрелками', 'Верхняя одежда', 'Джемперы', 'Пальто', 'Длинные юбки', 'Джинсы', 'Кожанные куртки', 'Шарф в клетку', 'Рубашка утепленная']
+
+const isMobile = ref(false)
+const checkWidth = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+onMounted(() => {
+  checkWidth()
+  window.addEventListener('resize', checkWidth)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', checkWidth)
+})
 </script>
 <template>
   <div class="head">
@@ -9,9 +25,15 @@ const tags = ['Брюки', 'Верхняя одежда', 'Джемперы', '
       <NuxtLink to="/">Рубашки и блузы</NuxtLink>
     </div>
     <h2>Женские блузы и рубашки</h2>
-    <div class="tags">
+    <div class="tags" v-if="!isMobile">
       <div class="tags__item" v-for="tag in tags" :key="tag">{{ tag }}</div>
     </div>
+    <Swiper v-if="isMobile" class="tags"  :slides-per-view="'auto'" :space-between="6">
+      <SwiperSlide class="tags__item" v-for="tag in tags" :key="tag">
+        {{ tag }}
+      </SwiperSlide>
+    </Swiper>
+
   </div>
 </template>
 <style lang="sass" scoped>
@@ -52,4 +74,18 @@ const tags = ['Брюки', 'Верхняя одежда', 'Джемперы', '
     padding: 6px 12px
     border-radius: 65px
     background: #E7E9EC
+@media (max-width: 768px)
+  .tags 
+    display: block
+    &__item 
+      max-width: max-content
+  .head 
+    gap: 14px
+    padding-left: 16px
+    padding-right: 16px
+    h2 
+      font-size: 20px
+      line-height: 110% 
+  .bread 
+    margin-bottom: 2px
 </style>

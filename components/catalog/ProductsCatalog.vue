@@ -1,7 +1,9 @@
 <script setup>
 import ProductBlock from '../common/ProductBlock.vue';
+import MobFilterSort from './MobFilterSort.vue';
+import MobFilterFilter from './MobFilterFilter.vue';
 import { defineProps, watch, ref, onMounted, nextTick, defineEmits } from 'vue';
-import { useIntersectionObserver } from '@vueuse/core'; 
+import { useIntersectionObserver } from '@vueuse/core';
 
 const emit = defineEmits(['updatePage']);
 const props = defineProps({
@@ -40,39 +42,55 @@ onMounted(() => {
     }
   });
 });
+
+const isMobile = ref(false)
+const checkWidth = () => {
+  isMobile.value = window.innerWidth <= 768
+}
+onMounted(() => {
+  checkWidth()
+  window.addEventListener('resize', checkWidth)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', checkWidth)
+})
 </script>
 
 <template>
-    <div class="like">
-      <div class="products">
-        <ProductBlock v-for="product in props.products" :key="product.title" :product="product" />
-        <div ref="loadMoreTrigger" class="load-more-trigger"></div>
-      </div>
+  <div class="like">
+    <div class="filter" v-if="isMobile">
+      <MobFilterSort />
+      <MobFilterFilter />
     </div>
+    <div class="products">
+      <ProductBlock v-for="product in props.products" :key="product.title" :product="product" />
+      <div ref="loadMoreTrigger" class="load-more-trigger"></div>
+    </div>
+  </div>
 </template>
 
 <style lang="sass" scoped>
 .load-more-trigger 
   height: 1px
-
 .like 
   background: #fff
   width: 100%
   border-radius: 12px
   padding: 28px 24px
-  h2 
-    margin-bottom: 24px
 .products 
   display: grid
   grid-template-columns: repeat(auto-fill, minmax(206px, 1fr))
   gap: 24px 12px
-  
+.filter 
+  display: flex
+  align-items: center
+  justify-content: space-between
+  margin-bottom: 16px
+    
 @media (max-width: 768px)
   .like 
-    padding: 20px 16px 36px
-    h2 
-      margin-bottom: 16px
+    padding: 16px 16px 36px
   .products 
-    grid-template-columns: repeat(2, 1fr)
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr))
     gap: 36px 6px
 </style>
