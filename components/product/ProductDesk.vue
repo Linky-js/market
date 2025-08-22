@@ -1,7 +1,7 @@
 <script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { ref, defineEmits } from 'vue'
-
+import ModalSize from './ModalSize.vue'
 const emit = defineEmits(['toggleHarActive'])
 const desk = {
   title: 'Пылесос Xiaomi DEERMA DX700 Белый',
@@ -66,6 +66,10 @@ const activeSizeIndex = ref(0)
 const setActiveSize = (index) => {
   activeSizeIndex.value = index
 }
+const isModalSizeOpen = ref(false)
+const openModalSize = () => {
+  isModalSizeOpen.value = true
+}
 </script>
 <template>
   <div class="desk">
@@ -111,7 +115,7 @@ const setActiveSize = (index) => {
     <div class="desk__sizes">
       <div class="desk__sizes-top">
         <div class="title">Размер</div>
-        <button>Таблица размеров</button>
+        <button @click="openModalSize">Таблица размеров</button>
       </div>
       <Swiper class="desk__sizes-wrap" :slides-per-view="'auto'" :space-between="8">
         <SwiperSlide class="size" v-for="(size, index) in desk.sizes" :key="size"
@@ -142,6 +146,7 @@ const setActiveSize = (index) => {
       </button>
     </div>
   </div>
+  <ModalSize v-if="isModalSizeOpen" @close="isModalSizeOpen = false" />
 </template>
 <style lang="sass" scoped>
 .desk 

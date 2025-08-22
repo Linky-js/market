@@ -41,6 +41,7 @@ onMounted(() => {
   console.log('Товар:', productResponse.value);
 })
 
+
 </script>
 <template>
   <div class="product">
@@ -54,6 +55,7 @@ onMounted(() => {
     <SliderProducts :title="'Похожие товары'" />
     <ProductReviews />
   </div>
+  
   <LikeBlock :title="'Может понравиться'" />
 </template>
 <style lang="sass" scoped>
