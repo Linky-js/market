@@ -34,7 +34,7 @@ const goAuth = () => {
       />
     </svg>
     <svg
-      v-else-if="name === 'whishlist'"
+      v-else-if="name === 'wishlist'"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"

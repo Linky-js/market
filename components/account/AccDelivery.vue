@@ -46,6 +46,7 @@ const deliverys = [
 
 </script>
 <template>
+  
   <div class="delivery">
     <div class="del" v-for="del in deliverys" :key="del">
       <div class="del__head">
@@ -76,10 +77,11 @@ const deliverys = [
         </div>
       </div>
     </div>
-
   </div>
 </template>
 <style lang="sass" scoped>
+h2 
+  display: none
 .delivery 
   display: flex
   flex-direction: column
@@ -153,4 +155,31 @@ const deliverys = [
         height: 104px
         border-radius: 5px
         object-fit: cover
+@media (max-width: 768px)
+
+  .delivery 
+    gap: 8px
+  .del 
+    padding: 20px 16px
+    &__head 
+      margin-bottom: 16px
+    &__status 
+      margin-bottom: 16px
+      p 
+        font-size: 14px
+        margin-bottom: 12px
+    &__sostav 
+      p 
+        font-size: 14px
+        margin-bottom: 8px
+      &-flex 
+        gap: 7px
+        img 
+          width: 66px
+          height: 78px
+          border-radius: 4px
+    &__price 
+      font-size: 14px
+      span 
+        font-size: 10px
 </style>

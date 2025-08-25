@@ -15,11 +15,11 @@ const isModalOpen = ref(false)
 const links = [
   {
     name: 'Доставки',
-    link: '/account-delivery'
+    link: '/account/delivery'
   },
   {
     name: 'История заказов',
-    link: '/account-history'
+    link: '/account/history'
   },
   {
     name: 'Покупки',
@@ -27,7 +27,7 @@ const links = [
   },
   {
     name: 'Избранные',
-    link: '#'
+    link: '/wishlist'
   },
   {
     name: 'Отзывы',
@@ -45,11 +45,13 @@ defineProps({
     default: ""
   }
 })
+
+const emit = defineEmits(["open-info"])
 </script>
 <template>
   <div class="menu">
     <div class="menu__f">
-      <div class="menu__f-info">
+      <div class="menu__f-info" @click="emit('open-info')">
         <NuxtImg :src="'/img/review-icon.png'" />
         <div class="col">
           <div class="name">Виктория</div>
@@ -170,5 +172,9 @@ defineProps({
         background-repeat: no-repeat
         flex-shrink: 0
         margin-left: auto
-      
+@media (max-width: 768px)
+  .menu 
+    max-width: 100%
+    &__f 
+      border-radius: 0 0 12px 12px
 </style>
