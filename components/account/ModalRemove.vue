@@ -67,4 +67,13 @@ const onBackdropClick = (e) => {
         &:hover 
           background: #E73C3C
           color: #fff
+@media (max-width: 768px)
+  .modal__content 
+    padding: 31px
+    p 
+      font-size: 16px
+      margin-bottom: 16px
+    .btn 
+      font-size: 14px
+      line-height: 20px
 </style>

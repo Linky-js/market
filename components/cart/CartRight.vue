@@ -40,7 +40,7 @@ onUnmounted(() => {
         <p>23 912 <span>₽</span></p>
       </div>
     </div>
-    <NuxtLink to="/" class="btn">Оформить заказ</NuxtLink>
+    <NuxtLink to="/checkout" class="btn">Оформить заказ</NuxtLink>
   </div>
   <div v-else class="mob">
     <div class="mob__left">
@@ -50,7 +50,7 @@ onUnmounted(() => {
       </div>
       <div class="mob__col">12 товаров</div>
     </div>
-    <NuxtLink to="/" class="btn">Оформить заказ</NuxtLink>
+    <NuxtLink to="/checkout" class="btn">Оформить заказ</NuxtLink>
   </div>
 </template>
 <style lang="sass" scoped>

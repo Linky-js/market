@@ -8,18 +8,6 @@ const isModalOpen = ref(false)
 const isModalRemoveOpen = ref(false)
 const isModalApprovedOpen = ref(false)
 
-// массив адресов
-const addresses = ref([
-  { id: 1, value: '' } // первый по умолчанию
-])
-
-// функция добавления
-const addAddress = () => {
-  addresses.value.push({
-    id: Date.now(), // уникальный id
-    value: ''
-  })
-}
 
 const phone = ref("")
 
@@ -49,9 +37,19 @@ function allowOnlyDigits(e) {
     e.preventDefault()
   }
 }
+
+const emit = defineEmits(["back"])
 </script>
 <template>
   <div class="column">
+    <button class="prev" @click="emit('back')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M7.13388 9.2503L11.2176 5.16655L10.0511 4L4.80078 9.2503L10.0511 14.5006L11.2176 13.334L7.13388 9.2503Z"
+          fill="#232323" />
+      </svg>
+      Профиль
+    </button>
     <div class="info">
       <div class="info__grid">
         <div class="info__box">
@@ -66,12 +64,16 @@ function allowOnlyDigits(e) {
       <div class="info__box">
         <p class="info__label">Пол*</p>
         <div class="info__radio">
-          <input type="radio" name="i-gender" id="i-gender-1">
-          <label for="i-gender-1">Женский</label>
+          <input type="radio" name="i-gender" id="i-gender-1" checked>
+          <label for="i-gender-1">Не выбран</label>
         </div>
         <div class="info__radio">
           <input type="radio" name="i-gender" id="i-gender-2">
-          <label for="i-gender-2">Мужской</label>
+          <label for="i-gender-2">Женский</label>
+        </div>
+        <div class="info__radio">
+          <input type="radio" name="i-gender" id="i-gender-3">
+          <label for="i-gender-3">Мужской</label>
         </div>
       </div>
       <div class="info__grid">
@@ -83,7 +85,7 @@ function allowOnlyDigits(e) {
           <label for="i-phone" class="info__label">Номер телефона*</label>
           <input type="tel" id="i-phone" class="inp" :value="phone" @input="formatPhone" @keypress="allowOnlyDigits"
             placeholder="+7 (___) ___-__-__" />
-          <span class="info__status" @click="isModalApprovedOpen = true">Не подтверждён</span>
+          <span class="info__status" @click="isModalApprovedOpen = true">Подтвердить</span>
         </div>
         <div class="info__box">
           <label for="i-email" class="info__label">E-mail*</label>
@@ -93,16 +95,6 @@ function allowOnlyDigits(e) {
           <label for="i-password" class="info__label">Пароль</label>
           <input type="password" name="i-password" id="i-password" class="inp" placeholder="Пароль">
         </div>
-        <div class="info__box" v-for="(address, index) in addresses" :key="address.id">
-          <label :for="'i-address-' + address.id" class="info__label">
-            {{ index === 0 ? 'Основной адрес' : 'Дополнительный адрес' }}
-          </label>
-          <input type="text" class="inp" :id="'i-address-' + address.id" :name="'i-address-' + address.id"
-            v-model="address.value" :placeholder="index === 0 ? 'Основной адрес' : 'Дополнительный адрес'" />
-        </div>
-        <button type="button" class="add-adress" @click="addAddress">
-          Добавить новый адрес
-        </button>
       </div>
     </div>
     <div class="out-remove">
@@ -115,6 +107,14 @@ function allowOnlyDigits(e) {
   <ModalApproved v-if="isModalApprovedOpen" @close="isModalApprovedOpen = false" />
 </template>
 <style lang="sass" scoped>
+.prev 
+  display: none
+  justify-content: flex-start
+  align-items: center
+  gap: 0
+  font-size: 14px
+  line-height: 18px
+  font-weight: 600
 .column 
   display: flex
   flex-direction: column
@@ -145,6 +145,7 @@ function allowOnlyDigits(e) {
     bottom: 15px
     z-index: 2
     cursor: pointer
+    color: var(--color-blue)
   &__grid
     display: grid
     grid-template-columns: repeat(2, 1fr)
@@ -211,4 +212,17 @@ function allowOnlyDigits(e) {
     color: #FB4711
     &:hover 
       text-decoration: underline
+@media (max-width: 991px)
+  .info__grid 
+    grid-template-columns: repeat(1, 1fr)
+@media (max-width: 768px)
+  .prev 
+    display: flex
+    padding: 16px 16px 8px
+  .info 
+    padding: 20px 16px
+  .out-remove 
+    gap: 15px
+    justify-content: space-between
+    padding: 8px 16px 16px
 </style>

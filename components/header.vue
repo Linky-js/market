@@ -68,7 +68,7 @@ onUnmounted(() => {
       </div>
       <div v-if="!isMobile" class="header__icons">
         <IconHeader :name="'shop'" :link="'/'" />
-        <IconHeader :name="'whishlist'" :link="'/whishlist'" />
+        <IconHeader :name="'wishlist'" :link="'/wishlist'" />
         <IconHeader @click="showAuth = true" :name="'user'"  />
       </div>
       <div v-if="isMobile" class="header__city">

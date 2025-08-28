@@ -5,7 +5,7 @@
 <template>
   <div class="head">
     <p>Оформление заказа</p>
-    <NuxtLink to="/">В корзину</NuxtLink>
+    <NuxtLink to="/cart">В корзину</NuxtLink>
   </div>
 </template>
 <style lang="sass" scoped>
