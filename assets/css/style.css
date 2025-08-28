@@ -246,6 +246,11 @@ body {
   outline: none;
   transition: all 0.3s ease;
 }
+textarea.inp {
+  max-height: 70px;
+  height: 100%;
+  resize: none;
+}
 .inp:focus {
   border: 1px solid #118AFB;
 }
@@ -281,4 +286,53 @@ body {
 }
 .custom-pagination button.active {
   background: #118AFB;
+}
+.i-radio input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+.i-radio label {
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 500;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  transition: .3s all;
+}
+.i-radio label::before {
+  margin-top: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  content: '';
+  border: 2px solid #A1A1A1;
+  flex-shrink: 0;
+  display: inline-block;
+  transition: .3s all;
+}
+.i-radio input:checked + label::before {
+  border-width: 5px;
+  border-color: var(--color-blue);
+}
+
+.default-btn {
+  padding: 16px;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--color-blue);
+  border-radius: 100px;
+  text-align: center;
+  transition: .3s all;
+  width: 100%;
+  cursor: pointer;
+}
+
+.default-btn:hover {
+  background: #0073dd;
 }
