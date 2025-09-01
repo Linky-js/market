@@ -59,6 +59,7 @@ const deliveries = [
   }
 ]
 const deliveryType = ref('Самовывоз')
+const isModalAdressOpen = ref(false)
 </script>
 <template>
   <div class="column">
@@ -81,11 +82,13 @@ const deliveryType = ref('Самовывоз')
             stroke="#118AFB" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <p> г. Краснодар, ул. имени Академика Лукьяненко, 123</p>
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M10.8438 6.34375L13.6562 9.15625M2.96875 13.6562V17.0312H6.34375L17.0312 6.34375L13.6562 2.96875L2.96875 13.6562Z"
-            stroke="#A1A1A1" stroke-width="1.6875" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+        <button @click="isModalAdressOpen = true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M10.8438 6.34375L13.6562 9.15625M2.96875 13.6562V17.0312H6.34375L17.0312 6.34375L13.6562 2.96875L2.96875 13.6562Z"
+              stroke="#A1A1A1" stroke-width="1.6875" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
       </div>
       <div class="del__adress" v-else-if="deliveryType === 'Доставка'">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -97,11 +100,13 @@ const deliveryType = ref('Самовывоз')
             stroke="#118AFB" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <p> г. Краснодар, ул. имени Академика Лукьяненко, 123</p>
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M10.8438 6.34375L13.6562 9.15625M2.96875 13.6562V17.0312H6.34375L17.0312 6.34375L13.6562 2.96875L2.96875 13.6562Z"
-            stroke="#A1A1A1" stroke-width="1.6875" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+        <button @click="isModalAdressOpen = true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M10.8438 6.34375L13.6562 9.15625M2.96875 13.6562V17.0312H6.34375L17.0312 6.34375L13.6562 2.96875L2.96875 13.6562Z"
+              stroke="#A1A1A1" stroke-width="1.6875" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
       </div>
       <div class="del__another">
         <input type="checkbox" name="another" id="another" value="another">
@@ -117,7 +122,7 @@ const deliveryType = ref('Самовывоз')
       </div>
     </div>
   </div>
-  <!-- <ModalAdress /> -->
+  <ModalAdress v-if="isModalAdressOpen" @close="isModalAdressOpen = false" />
 </template>
 <style lang="sass" scoped>
 .column 
@@ -220,6 +225,9 @@ const deliveryType = ref('Самовывоз')
     font-weight: 600
     max-width: 408px
     width: 100%
+  button:hover 
+    path 
+      stroke: var(--color-blue)
 .dels
   display: flex
   flex-direction: column
