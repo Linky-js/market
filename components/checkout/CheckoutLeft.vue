@@ -1,9 +1,16 @@
 <script setup>
 import ModalAdress from '../account/ModalAdress.vue'
+import { Swiper, SwiperSlide } from 'swiper/vue'
 import { ref } from 'vue'
+import 'swiper/css'
 const deliveries = [
   {
     when: 'Завтра',
+    dates: [
+      '18.02', '19.02', '20.02', '21.02', '22.02', '23.02', '24.02', '25.02', '26.02', '27.02',
+    ],
+    time: '12:00 - 14:00',
+    price: '100',
     imgs: [
       '/img/product.jpg',
       '/img/product.jpg',
@@ -29,6 +36,11 @@ const deliveries = [
   },
   {
     when: '28 августа',
+    dates: [
+      '18.03', '19.03', '20.03', '21.03', '22.03', '23.03', '24.03', '25.03', '26.03', '27.03',
+    ],
+    time: '12:00 - 14:00',
+    price: '100',
     imgs: [
       '/img/product.jpg',
       '/img/product.jpg',
@@ -44,6 +56,11 @@ const deliveries = [
   },
   {
     when: '25 августа - понедельник',
+    dates: [
+      '18.04', '19.04', '20.04', '21.04', '22.04', '23.04', '24.04', '25.04', '26.04', '27.04',
+    ],
+    time: '12:00 - 14:00',
+    price: '100',
     imgs: [
       '/img/product.jpg',
       '/img/product.jpg',
@@ -116,6 +133,16 @@ const isModalAdressOpen = ref(false)
     <div class="dels">
       <div class="dels__item" v-for="del in deliveries" :key="del.when">
         <h3>{{ del.when }}</h3>
+        <Swiper v-if="deliveryType === 'Доставка'" class="dels__item-dates" :slides-per-view="'auto'" :space-between="6" >
+          <SwiperSlide v-for="date in del.dates" :key="date">
+            <input type="radio" :name="del.when" :id="date" :value="date">
+            <label :for="date">{{ date }}</label>
+          </SwiperSlide>
+        </Swiper>
+        <div class="dels__item-tp" v-if="deliveryType === 'Доставка'">
+          <div class="time">{{ del.time }},</div>
+          <div class="price">{{ del.price }} <span>₽</span></div>
+        </div>
         <div class="dels__item-imgs">
           <img v-for="img in del.imgs" :src="img" alt="">
         </div>
@@ -242,6 +269,42 @@ const isModalAdressOpen = ref(false)
       line-height: 25px
       letter-spacing: -0.02em
       font-weight: 600
+    &-tp 
+      display: flex
+      align-items: center
+      gap: 4px
+      margin-bottom: 20px
+      .time 
+        font-size: 14px
+        line-height: 18px
+        font-weight: 500
+      .price 
+        font-size: 14px
+        line-height: 18px
+        font-weight: 700
+    &-dates
+      margin-bottom: 12px
+      .swiper-slide 
+        max-width: max-content
+      input 
+        position: absolute
+        width: 0
+        height: 0
+        opacity: 0
+      label 
+        padding: 12px
+        font-size: 14px
+        line-height: 18px
+        font-weight: 600
+        background: #F5F5F5
+        border: 1px solid #F5F5F5
+        border-radius: 8px
+        cursor: pointer
+        transition: .3s all
+        display: block
+      input:checked + label 
+        border-color: var(--color-blue)
+        color: var(--color-blue)
     &-imgs
       display: grid
       grid-template-columns: repeat(auto-fill, minmax(88px, 1fr))
@@ -267,6 +330,19 @@ const isModalAdressOpen = ref(false)
         grid-template-columns: repeat(auto-fill, minmax(66px, 1fr))
         img 
           height: 78px
-
+  .dels__item-dates
+    margin-bottom: 8px
+  .dels__item-tp 
+    margin-bottom: 16px
+    .time 
+      font-size: 12px
+      line-height: 16px
+    .price 
+      font-size: 12px
+      line-height: 16px
+  .dels__item-dates label
+    padding: 10px 11px
+    font-size: 12px
+    line-height: 16px
 
 </style>
