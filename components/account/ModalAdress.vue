@@ -140,7 +140,7 @@ const adress = [
         <button class="left__btn default-btn" @click="editAdress = false">Сохранить и продолжить</button>
       </div>
       <div class="left new" v-if="newAdress">
-        <div class="left__prev" @click="newAdress = false">
+        <div class="left__prev desktop" @click="newAdress = false">
           <svg width="11" height="16" viewBox="0 0 11 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M4.51378 7.99966L8.91378 3.59966L7.65689 2.34277L2 7.99966L7.65689 13.6566L8.91378 12.3997L4.51378 7.99966Z"
@@ -149,25 +149,40 @@ const adress = [
           Назад
         </div>
         <div class="left__content">
-          <div class="left__switch">
-            <input type="radio" name="del-2" id="del-1-2" value="Самовывоз" checked>
-            <label for="del-1-2" class="del__switch-self">Самовывоз</label>
-            <input type="radio" name="del-2" id="del-2-2" value="Доставка">
-            <label class="del__switch-delivery" for="del-2-2">Доставка</label>
-            <div class="bg"></div>
-          </div>
-          <div class="left__location">
-            <div class="left__location-btn">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div class="left__content-up">
+            <div class="left__prev" @click="newAdress = false">
+              <svg width="11" height="16" viewBox="0 0 11 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
-                  d="M14.0545 3.03335L2.51543 6.58391C1.88607 6.77757 1.81452 7.63978 2.40349 7.93427L7.29406 10.3796C7.43532 10.4502 7.54991 10.5648 7.62054 10.706L10.0657 15.5964C10.3602 16.1854 11.2222 16.114 11.4159 15.4846L14.9667 3.94531C15.139 3.38527 14.6145 2.86103 14.0545 3.03335Z"
-                  stroke="#118AFB" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+                  d="M4.51378 7.99966L8.91378 3.59966L7.65689 2.34277L2 7.99966L7.65689 13.6566L8.91378 12.3997L4.51378 7.99966Z"
+                  fill="#232323" />
               </svg>
-              Определить адрес
+              Назад
             </div>
-            <input class="inp" type="text" name="location" id="location" placeholder="Укажите свой адрес">
+            <div class="left__switch">
+              <input type="radio" name="del-2" id="del-1-2" value="Самовывоз" checked>
+              <label for="del-1-2" class="del__switch-self">Самовывоз</label>
+              <input type="radio" name="del-2" id="del-2-2" value="Доставка">
+              <label class="del__switch-delivery" for="del-2-2">Доставка</label>
+              <div class="bg"></div>
+            </div>
           </div>
-          <div class="default-btn" @click="newAdress = false">Далее</div>
+          <div class="map">
+            <img src="/img/map.jpg" alt="">
+          </div>
+          <div class="left__content-bot">
+            <div class="left__location">
+              <div class="left__location-btn">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M14.0545 3.03335L2.51543 6.58391C1.88607 6.77757 1.81452 7.63978 2.40349 7.93427L7.29406 10.3796C7.43532 10.4502 7.54991 10.5648 7.62054 10.706L10.0657 15.5964C10.3602 16.1854 11.2222 16.114 11.4159 15.4846L14.9667 3.94531C15.139 3.38527 14.6145 2.86103 14.0545 3.03335Z"
+                    stroke="#118AFB" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Определить адрес
+              </div>
+              <input class="inp" type="text" name="location" id="location" placeholder="Укажите свой адрес">
+            </div>
+            <div class="default-btn" @click="newAdress = false">Далее</div>
+          </div>
         </div>
       </div>
       <div class="map">
@@ -185,7 +200,6 @@ const adress = [
   bottom: 0
   width: 100%
   height: calc(100vh - 98px) 
-  background: rgba(35, 35, 35, 0.5)
   display: flex
   align-items: center
   justify-content: center
@@ -193,7 +207,7 @@ const adress = [
   &__content 
     width: 100%
     height: 100%
-    background: #F2F4F8
+    
     display: flex
 .title 
   font-size: 20px
@@ -216,12 +230,15 @@ const adress = [
   padding: 36px 48px 72px
   display: flex
   flex-direction: column
+  background: #F2F4F8
   gap: 16px
   &.new 
     .left__content 
       padding: 24px
       gap: 24px
       max-height: max-content
+      .map 
+        display: none
     .default-btn
       font-size: 14px
       padding: 14px
@@ -342,7 +359,13 @@ const adress = [
       background-color: red
       border-radius: 20px    
       border: 4px solid #fff   
-
+    &-up 
+      .left__prev 
+        display: none
+    &-bot 
+      display: flex
+      flex-direction: column
+      gap: 24px
   &__adress, &__data 
     display: flex
     flex-direction: column
@@ -401,4 +424,76 @@ const adress = [
       button:hover 
         path 
           stroke: var(--color-blue)
+@media (max-width: 1440px)
+  .left 
+    padding: 36px 24px 72px
+    max-width: 360px
+@media (max-width: 767px)
+  .modal 
+    height: 100vh
+  .map 
+    display: none
+  .left 
+    padding: 0
+    max-width: 100%
+    height: 100%
+    gap: 0
+    &__content 
+      max-height: 100vh
+      padding: 20px 16px 150px
+    &__prev 
+      padding: 16px
+      margin-bottom: 0
+      font-size: 14px
+      line-height: 18px
+    &__btn 
+      position: fixed
+      bottom: 70px
+      left: 16px
+      width: calc(100% - 32px)
+      z-index: 2
+  .left.edit 
+    .left__content 
+      padding: 20px 16px
+  .left.new 
+    background: none
+    gap: 0
+    .left__content 
+      gap: 0
+      background: none
+      display: flex
+      flex-direction: column
+      justify-content: space-between
+      height: 100%
+      max-height: 100%
+      padding: 0
+      padding-bottom: 55px
+      border-radius: 0
+      .map 
+        display: block
+        position: absolute
+        top: 0
+        left: 0
+        bottom: 0
+        width: 100%
+        height: 100%
+  .left__prev.desktop 
+    display: none
+  .left__content-up 
+    display: flex
+    gap: 24px
+    padding: 20px 16px
+    background: #fff
+    border-radius: 0 0 12px 12px
+    position: relative
+    z-index: 2
+    .left__prev 
+      display: flex
+      padding: 0
+  .left__content-bot 
+    position: relative
+    z-index: 2
+    padding: 16px
+    background: #fff
+    border-radius: 12px 12px 0 0
 </style>
