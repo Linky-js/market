@@ -35,15 +35,18 @@ onMounted(() => {
   <div class="product">
     <BreadBlock />
     <div class="product__top">
-      <ProductSlide :images="productResponse?.images" />
-      <ProductDesk @toggleHarActive="goCharakteristick($event)" :product="productResponse" />
+      <div class="product__top-left">
+        <ProductSlide :images="productResponse?.images" />
+        <ProductDesk @toggleHarActive="goCharakteristick($event)" :product="productResponse" />
+      </div>
       <ProductRight :product="productResponse" />
     </div>
-    <ProductAbout @toggleHarActive="goCharakteristick($event)" :product="productResponse" :charakteristick="charakteristick" />
+    <ProductAbout @toggleHarActive="goCharakteristick($event)" :product="productResponse"
+      :charakteristick="charakteristick" />
     <SliderProducts :title="'Похожие товары'" />
     <ProductReviews />
   </div>
-  
+
   <LikeBlock :title="'Может понравиться'" />
 </template>
 <style lang="sass" scoped>
@@ -52,16 +55,24 @@ onMounted(() => {
   &__top 
     display: flex
     gap: 24px
-    align-items: flex-start
+    &-left 
+      display: flex
+      gap: 24px
+      width: 100%
+      max-width: calc(100% - 344px)
 @media (max-width: 1440px)
   .product 
     padding: 36px 24px
 @media (max-width: 1200px)
   .product__top 
     flex-wrap: wrap
+    &-left 
+      max-width: 100%
 @media (max-width: 768px)
   .product 
     padding: 0 0 8px
     &__top 
       gap: 0
+      &-left 
+        display: contents
 </style>

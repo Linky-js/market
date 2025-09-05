@@ -16,27 +16,9 @@ const props = defineProps({
     default: () => []
   }
 })
-// const images = [
-//   '/img/product-big.jpg',
-//   '/img/product.jpg',
-//   '/img/product-big.jpg',
-//   '/img/product.jpg',
-//   '/img/product-big.jpg',
-//   '/img/product.jpg',
-//   '/img/product-big.jpg',
-//   '/img/product.jpg',
-//   '/img/product-big.jpg',
-//   '/img/product.jpg',
-//   '/img/product-big.jpg',
-//   '/img/product.jpg',
-//   '/img/product-big.jpg',
-//   '/img/product.jpg',
-//   '/img/product-big.jpg',
-//   '/img/product.jpg',
-// ]
 
 
-const thumbsSwiperMain = ref(null)   
+const thumbsSwiperMain = ref(null)
 
 const showModal = ref(false)
 const currentSlide = ref(0)
@@ -79,14 +61,13 @@ onUnmounted(() => {
 
 <template>
   <div class="slider">
-    <Swiper v-if="!isMobile" class="slider-left" direction="vertical" :slides-per-view="'auto'" :space-between="8"
+    <Swiper v-if="!isMobile && props.images.length > 1" class="slider-left" direction="vertical" :slides-per-view="'auto'" :space-between="8"
       @swiper="thumbsSwiperMain = $event" :watch-slides-progress="true">
       <SwiperSlide v-for="(img, i) in props.images" :key="'thumb-' + i">
         <img :src="img" />
       </SwiperSlide>
     </Swiper>
-
-    <Swiper class="slider-right" :slides-per-view="1" :space-between="0" :modules="[Pagination, Thumbs]"
+    <Swiper v-if="props.images.length > 0" class="slider-right" :slides-per-view="1" :space-between="0" :modules="[Pagination, Thumbs]"
       :thumbs="{ swiper: thumbsSwiperMain }" :pagination="{
         el: '.sl-pag', bulletClass: 'sl-pag-bullet',
         bulletActiveClass: 'sl-pag-bullet-active', clickable: true
@@ -96,6 +77,9 @@ onUnmounted(() => {
       </SwiperSlide>
       <div class="sl-pag"></div>
     </Swiper>
+    <div v-else class="def-img">
+      <img :src="'https://saldovka.com/wp-content/uploads/2015/06/41i5587c510d477a.jpeg'" />
+    </div>
   </div>
   <!-- Модальное окно -->
   <div class="modal" v-if="showModal" @click.self="closeModal">
@@ -108,8 +92,8 @@ onUnmounted(() => {
         </svg>
       </div>
       <div class="modal__swiper">
-        <Swiper class="modal__slider-left" direction="vertical" :initial-slide="currentSlide" :slides-per-view="'auto'" :space-between="8"
-          @swiper="thumbsSwiperModal = $event" :watch-slides-progress="true" :breakpoints="{
+        <Swiper v-if="images.length > 1" class="modal__slider-left" direction="vertical" :initial-slide="currentSlide" :slides-per-view="'auto'"
+          :space-between="8" @swiper="thumbsSwiperModal = $event" :watch-slides-progress="true" :breakpoints="{
             0: {
               direction: 'horizontal',
               slidesPerView: 'auto',
@@ -132,7 +116,7 @@ onUnmounted(() => {
           <SwiperSlide v-for="(img, i) in images" :key="'main-modal-' + i">
             <img :src="img" />
           </SwiperSlide>
-          <div class="modal__arrows">
+          <div class="modal__arrows" v-if="images.length > 1">
             <div class="modal-arrow modal-arrow-prev">
               <svg width="9" height="14" viewBox="0 0 9 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -215,6 +199,7 @@ onUnmounted(() => {
   height: 100%
   max-height: 900px
   overflow: hidden
+  max-width: 90px
   .swiper-slide 
     border-radius: 4px
     overflow: hidden
@@ -230,6 +215,7 @@ onUnmounted(() => {
 .modal__slider-right 
   padding: 72px 0
   height: 100%
+  width: 100%
   .swiper-slide 
     width: 100%
     height: 100%
@@ -244,13 +230,23 @@ onUnmounted(() => {
       max-width: 100%
       max-height: 758px
       object-fit: contain
-
+.def-img 
+  max-width: 100%
+  width: 100%
+  height: 100%
+  background: #fff
+  border-radius: 12px
+  img 
+    width: 100%
+    height: 100%
+    object-fit: contain
 .slider 
   display: flex
   justify-content: flex-start
   gap: 8px
   height: 592px
-  max-width: calc(594px * 100% / 1296px)
+  width: 100%
+  max-width: 59.4%
   &-left 
     width: 66px
     flex-shrink: 0
@@ -266,11 +262,13 @@ onUnmounted(() => {
   &-right 
     max-width: 100%
     width: 100%
+    background: #fff
+    border-radius: 12px
     img 
       border-radius: 8px
       width: 100%
       height: 100%
-      object-fit: cover
+      object-fit: contain
 .sl-pag
   display: none
   position: absolute

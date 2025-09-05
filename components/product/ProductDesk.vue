@@ -295,7 +295,7 @@ const currentAttributes = computed(() => {
   background: #fff
   border-radius: 12px
   width: 100%
-  max-width: calc(382px * 100% / 1296px)
+  max-width: 39%
   height: 100%
   .disabled
     cursor: none !important

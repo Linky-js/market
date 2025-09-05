@@ -111,7 +111,9 @@ watch(
   letter-spacing: -0.02em
   margin-bottom: 10px
 .right 
-  max-width: calc(320px * 100% / 1296px)
+  max-width: 320px
+  flex-shrink: 0
+  height: max-content
   width: 100%
   background: #fff
   padding: 24px
@@ -219,7 +221,7 @@ watch(
     flex-wrap: wrap
 @media (max-width: 1200px)
   .right 
-    max-width: calc(50% - 12px)
+    max-width: 100%
 @media (max-width: 768px)
   .right 
     max-width: 100%

@@ -353,7 +353,7 @@ const allReviewImages = computed(() => {
   align-items: flex-start
 .right 
   padding: 24px
-  max-width: calc(320px * 100% / 1296px)
+  max-width: 320px
   width: 100%
   background: #fff
   border-radius: 12px
@@ -449,7 +449,7 @@ const allReviewImages = computed(() => {
   border-radius: 12px
   background: #fff
   width: 100%
-  max-width: calc(1000px * 100% / 1296px)
+  max-width: 100%
   &__btn 
     display: flex
     align-items: center
