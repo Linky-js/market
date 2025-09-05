@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps } from 'vue';
-// import ProductBlock from '../common/ProductBlock.vue';
+import ProductBlock from '../common/ProductBlock.vue';
 
 const props = defineProps({
   title: {

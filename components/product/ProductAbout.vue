@@ -184,7 +184,7 @@ const toggleHarActive = () => {
   padding: 24px
   background: #fff
   border-radius: 12px
-  max-width: calc(1000px * 100% / 1296px)
+  max-width: calc(100% - 344px)
   width: 100%
   margin-top: 48px
   margin-bottom: 24px
