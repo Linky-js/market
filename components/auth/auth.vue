@@ -9,6 +9,7 @@ const store = useStore()
 const apiDomain = store.apiDomain;
 const step = ref("start");
 
+const registerFlag = ref(false);
 const soglasie = ref(null);
 const soglasieError = ref(false);
 const phone = ref("");
@@ -88,7 +89,13 @@ const goCode = async () => {
       checkResponse.register === false &&
       checkResponse.command === "register to phone"
     ) {
+      registerFlag.value = true;
       await goValueCode(cleanedPhone);
+    } else if (
+      checkResponse.register === true 
+    ) {
+      step.value = "code";
+      goLoginCode();
     }
   } catch (error) {
     console.error("Ошибка при выполнении запроса:", error);
@@ -122,6 +129,27 @@ const goValueCode = async (cleanedPhone) => {
   }
   console.log("Код активации:", activationCode);
 };
+const goLoginCode = async () => {
+  try {
+    let cleanedPhone = phone.value.replace(/[^\d+]/g, "");
+    const loginResponse = await $fetch(apiDomain + "/api/auth/phone_login_get_code/?phone_number=" + encodeURIComponent(cleanedPhone), {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: {
+        phone_number: cleanedPhone,
+      },
+    });
+    console.log("Результат авторизации:", loginResponse);
+    if (loginResponse.ok) {
+      code.value = loginResponse.activation_code;
+      recordId.value = loginResponse.record_id;
+    }
+  } catch (error) {
+    console.error("Ошибка при выполнении запроса:", error);
+  }
+};
 const goRegister = async () => {
   try {
     const registerResponse = await $fetch(
@@ -139,10 +167,19 @@ const goRegister = async () => {
         credentials: "include",
       }
     );
+
     console.log("Результат регистрации:", registerResponse);
-    if (registerResponse.ok) {
-      const accessToken = useCookie("access_token");
-      const refreshToken = useCookie("refresh_token");
+
+    if (registerResponse.access_token && registerResponse.refresh_token) {
+      const accessToken = useCookie("access_token", {
+        maxAge: 60 * 60 * 1, // 1 час
+        sameSite: "lax",
+      });
+
+      const refreshToken = useCookie("refresh_token", {
+        maxAge: 60 * 60 * 24 * 1, // 1 дней
+        sameSite: "lax",
+      });
 
       accessToken.value = registerResponse.access_token;
       refreshToken.value = registerResponse.refresh_token;
@@ -151,6 +188,47 @@ const goRegister = async () => {
     console.error("Ошибка при выполнении запроса:", error);
   }
 };
+
+const goLogin = async () => {
+  try {
+    const loginResponse = await $fetch(apiDomain + "/api/auth/login_phone_with_code/", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: {
+        code: code.value.replace(/[^a-zA-Z0-9]/g, ''),
+        record_id: recordId.value,
+      },
+      credentials: "include",
+    });
+    console.log("Результат авторизации:", loginResponse);
+    if (loginResponse.access_token && loginResponse.refresh_token) {
+      const accessToken = useCookie("access_token", {
+        maxAge: 60 * 60 * 1, // 1 час
+        sameSite: "lax",
+      });
+
+      const refreshToken = useCookie("refresh_token", {
+        maxAge: 60 * 60 * 24 * 1, // 1 дней
+        sameSite: "lax",
+      });
+
+      accessToken.value = loginResponse.access_token;
+      refreshToken.value = loginResponse.refresh_token;
+    }
+  } catch (error) {
+    console.error("Ошибка при выполнении запроса:", error);
+  }
+};
+
+const codeSuccess = () => {
+  if (registerFlag.value) {
+    goRegister();
+  } else {
+    goLogin();
+  }
+}
 const handleResend = () => {
   goCode();
 };
@@ -240,7 +318,7 @@ const handleResend = () => {
           type="code"
           v-model="code"
         />
-        <a @click="goRegister" class="btn__blue">Войти</a>
+        <a @click="codeSuccess" class="btn__blue">Войти</a>
         <resendtimer @resend="handleResend" />
       </form>
     </div>

@@ -1,14 +1,32 @@
 <script setup>
 import { ref, watch, defineProps, defineEmits } from 'vue'
-
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
 const emit = defineEmits(['toggleHarActive'])
 const props = defineProps({
   charakteristick: {
     type: Boolean,
     default: false
+  },
+  product: {
+    type: Object,
+    required: false,
   }
 })
 
+const currentAttributes = computed(() => {
+  // Показать attributes из модификации; если пусто — собрать из groups/selected
+  const attrs = currentModification.value?.attributes || {}
+  const result = { ...attrs }
+  // for (const g of groups.value) {
+  //   const key = g.attributeName
+  //   if (result[key] == null && selected[key] != null) {
+  //     result[key] = selected[key]
+  //   }
+  // }
+  if (currentModification.value?.sku) result['sku'] = currentModification.value.sku
+  return result
+})
 const activeTab = ref(0) // индекс активного таба
 const about = {
   about: 'Пылесос Deerma DX700 можно использовать в качестве ручного или обычного полового пылесоса, а благодаря весу всего в 2.2 кг даже долгая уборка не утомляет и не вызывает усталости. в которых от воздуха отделяется пыль, волосы и другие крупные частицы. В такой системе невозможно образование засоров, а значит и сила всасывания со временем не теряется. Идущие в комплекте половая щетка, щетка с круглым носиком и тонкая насадка помогут навести чистоту в любом месте, убирая пыль с пола, поверхности мебели и даже из узких щелей. Всего один пылесос справится с разными задачами - в вертикальном положении он очистит пол, а в ручном - мебель и прочие поверхности. Пылесос Deerma DX700 можно использовать в качестве ручного или обычного полового пылесоса, а благодаря весу всего в 2.2 кг даже долгая уборка не утомляет и не вызывает усталости. в которых от воздуха отделяется пыль, волосы и другие крупные частицы. В такой системе невозможно образование засоров, а значит и сила всасывания со временем не теряется. Идущие в комплекте половая щетка, щетка с круглым носиком и тонкая насадка помогут навести чистоту в любом месте, убирая пыль с пола, поверхности мебели и даже из узких щелей. Всего один пылесос справится с разными задачами - в вертикальном положении он очистит пол, а в ручном - мебель и прочие поверхности.',
@@ -63,16 +81,37 @@ const about = {
     },
   ]
 }
+const currentModification = ref(null)
+const setCurrentModification = () => {
+  let modifications = props.product.modifications;
+  let currentSlug = route.params.slug[0];
+  for (let i = 0; i < modifications.length; i++) {
+    if (modifications[i].slug === currentSlug) {
+      currentModification.value = modifications[i];
+      break;
+    }
+  }
+  console.log('setCurrentModification', currentModification.value);
+};
 watch(() => props.charakteristick, (newValue) => {
   if (newValue) {
-    console.log('charakteristick',newValue);
-    
+    console.log('charakteristick', newValue);
+
     activeTab.value = 1
   }
 })
+watch(
+  () => [props.product, route.params.slug?.[0]],
+  () => {
+    if (!props.product) return
+    // если групп нет — делать нечего
+    setCurrentModification()
+  },
+  { immediate: true }
+)
 const setActiveTab = (index) => {
   if (index === 0) {
-   emit('toggleHarActive', false)
+    emit('toggleHarActive', false)
   }
   activeTab.value = index
 }
@@ -97,9 +136,9 @@ const toggleHarActive = () => {
     </div>
     <div class="about__content">
       <div class="about__text" v-show="activeTab === 0">
-        <p :class="{ active: isParagraphActive }">{{ about.about }}</p>
+        <p :class="{ active: isParagraphActive }">{{ props.product.description }}</p>
         <button @click="toggleParagraphActive" v-if="!isParagraphActive">Показать больше
-          <svg :class="{ active: isParagraphActive }" width="17" height="8" viewBox="0 0 17 8" fill="none"
+          <svg  width="17" height="8" viewBox="0 0 17 8" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <g clip-path="url(#clip0_392_19179)">
               <path fill-rule="evenodd" clip-rule="evenodd"
@@ -116,9 +155,9 @@ const toggleHarActive = () => {
       </div>
       <div class="about__har" v-show="activeTab === 1">
         <div class="about__har-list" :class="{ active: isHarActive }">
-          <div class="about__har-item" v-for="item in about.har" :key="item">
-            <span>{{ item.title }}</span>
-            <span>{{ item.text }}</span>
+          <div class="about__har-item" v-for="(value, key) in currentAttributes" :key="item">
+            <span>{{ key }}</span>
+            <span>{{ value}}</span>
           </div>
         </div>
         <button @click="toggleHarActive" v-if="!isHarActive">Показать больше

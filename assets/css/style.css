@@ -336,3 +336,7 @@ textarea.inp {
 .default-btn:hover {
   background: #0073dd;
 }
+svg.whishActive path{
+  fill: #118AFB !important;
+  stroke: #118AFB !important;
+}

@@ -6,7 +6,11 @@ import { Pagination } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
+import { useFavorites } from '~/composables/useFavorites'
 
+const { toggleFavorite, checkFavorites } = useFavorites()
+
+const isLike = ref(false);
 const swiperRef = ref(null);
 
 const setSwiper = (swiper) => {
@@ -49,6 +53,27 @@ watch(
   },
   { immediate: true }
 );
+const addTowhishlist = async () => {
+  const res = await toggleFavorite(props.product.id)
+  console.log('Ответ сервера:', res)
+  if (res.is_favorite) {
+    isLike.value = true
+  } else {
+    isLike.value = false
+  }
+}
+const checkhWishlist = async () => {
+  const check = await checkFavorites(props.product.id)
+  
+
+  const productId = props.product.id
+  const favorites = check?.favorites || {}
+
+  isLike.value = favorites[productId] === true
+}
+onMounted(() => {
+  checkhWishlist()
+})
 
 </script>
 <template>
@@ -81,8 +106,9 @@ watch(
       </div>
 
       <div v-if="props.product.discount" class="sale">{{ props.product.discount }}</div>
-      <button class="like">
+      <button @click="addTowhishlist" class="like">
         <svg
+        :class="{ whishActive: isLike }"
           width="24"
           height="24"
           viewBox="0 0 24 24"

@@ -1,80 +1,204 @@
 <script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
-import { ref, defineEmits } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import ModalSize from './ModalSize.vue'
-const emit = defineEmits(['toggleHarActive'])
-const desk = {
-  title: 'Пылесос Xiaomi DEERMA DX700 Белый',
-  star: '4.7',
-  reviews: '126 отзывов',
-  colors: [
-    {
-      title: 'Белый',
-      image: '/img/product.jpg'
-    },
-    {
-      title: 'Черный',
-      image: '/img/product.jpg'
-    },
-    {
-      title: 'Фиолетовый',
-      image: '/img/product.jpg'
-    },
-    {
-      title: 'Красный',
-      image: '/img/product.jpg'
-    },
-  ],
-  sizes: [
-    '48 / XL',
-    '50 / XL',
-    '52 / XL',
-    '54 / XL',
-    '54 / XL',
-    '54 / XL',
-    '54 / XL',
-  ],
-  har: [
-    {
-      title: 'Артикул',
-      text: '6244567',
-    },
-    {
-      title: 'Производитель',
-      text: 'Xiaomi',
-    },
-    {
-      title: 'Страна',
-      text: 'Китай',
-    },
-    {
-      title: 'Страна',
-      text: 'Китай',
-    },
-    {
-      title: 'Сезон',
-      text: 'Любой',
-    }
-  ]
-}
-const activeColorIndex = ref(0)
-const setActiveColor = (index) => {
-  activeColorIndex.value = index
-}
-const activeSizeIndex = ref(0)
+import { useFavorites } from '~/composables/useFavorites'
 
-const setActiveSize = (index) => {
-  activeSizeIndex.value = index
+const { toggleFavorite, checkFavorites } = useFavorites()
+const route = useRoute()
+const router = useRouter()
+
+const props = defineProps({
+  product: {
+    type: Object,
+    required: false,
+    default: null
+  }
+})
+
+const emit = defineEmits(['toggleHarActive']);
+
+/** ---------- Helpers ---------- */
+const NO_PHOTO = '/img/no-photo.png' // замените при необходимости
+const isLike = ref(false);
+
+const getModAttr = (mod, name) => {
+  if (!mod) return undefined
+  return mod[name] ?? mod?.attributes?.[name]
 }
+
+const buildGroups = (product) => {
+  if (!product) return []
+  // Если пришли modificationGroups — используем их
+  if (Array.isArray(product.modificationGroups) && product.modificationGroups.length) {
+    return product.modificationGroups.map(g => ({
+      attributeName: g.attributeName,
+      displayName: g.displayName || g.attributeName,
+      // Значения оставляем как пришли (сохраняем сортировку бэка)
+      values: Array.isArray(g.values) ? g.values.slice() : []
+    }))
+  }
+  // Иначе строим группы из ключей attributes модификаций
+  const map = new Map()
+  for (const m of product.modifications || []) {
+    const attrs = m.attributes || {}
+    for (const [k, v] of Object.entries(attrs)) {
+      if (!map.has(k)) map.set(k, new Set())
+      map.get(k).add(v)
+    }
+  }
+  return Array.from(map.entries()).map(([k, set]) => ({
+    attributeName: k,
+    displayName: k,
+    values: Array.from(set)
+  }))
+}
+
+const groups = computed(() => buildGroups(props.product))
+const colorGroup = computed(() => groups.value.find(g => g.attributeName === 'color') || null)
+const nonColorGroups = computed(() => groups.value.filter(g => g.attributeName !== 'color'))
+
+const currentModification = ref(null)
+const selected = reactive({}) // { attributeName: value }
+
+/** Найти модификацию по текущему partial-выбору. Если несколько — берем первую. */
+const findModificationBySelection = () => {
+  if (!props.product?.modifications?.length) return null
+  const mods = props.product.modifications
+  const match = mods.find(m => {
+    return Object.keys(selected).every(attr => {
+      const selVal = selected[attr]
+      if (selVal == null) return true
+      return getModAttr(m, attr) === selVal
+    })
+  })
+  return match || null
+}
+
+/** Доступность значения для конкретного атрибута при текущем выборе остальных */
+const isValueAvailable = (attributeName, value) => {
+  if (!props.product?.modifications?.length) return false
+  return props.product.modifications.some(m => {
+    for (const [attr, selVal] of Object.entries(selected)) {
+      if (attr === attributeName) continue
+      if (selVal != null && getModAttr(m, attr) !== selVal) {
+        return false
+      }
+    }
+    // А искомый атрибут — иметь это value
+    return getModAttr(m, attributeName) === value
+  })
+}
+
+/** После выбора значения атрибута пробуем найти модификацию.
+ * Если нашли — синхронизируем selected с фактическими атрибутами модификации.
+ */
+const applySelectionToModification = () => {
+  const match = findModificationBySelection()
+  if (match) {
+    currentModification.value = match
+    for (const g of groups.value) {
+      selected[g.attributeName] = getModAttr(match, g.attributeName) ?? null
+    }
+    if (match.slug && route.params.slug?.[0] !== match.slug) {
+      router.push(`/product/${match.slug}`)
+    }
+  }
+}
+
+const onSelectValue = (attributeName, value, disabled) => {
+  if (disabled) return
+  selected[attributeName] = value
+  applySelectionToModification()
+}
+
+const getColorPreview = (colorValue) => {
+  if (!props.product) return NO_PHOTO
+  const modWithImg = props.product.modifications?.find(m => {
+    return getModAttr(m, 'color') === colorValue && Array.isArray(m.images) && m.images.length
+  })
+  if (modWithImg) return modWithImg.images[0]
+  if (Array.isArray(props.product.images) && props.product.images.length) return props.product.images[0]
+  return NO_PHOTO
+}
+
+/** Инициализация из slug */
+const initFromSlug = () => {
+  if (!props.product?.modifications?.length) return
+  const currentSlug = route.params.slug?.[0]
+  let mod = props.product.modifications.find(m => m.slug === currentSlug)
+  if (!mod) {
+    mod = props.product.modifications[0]
+  }
+  currentModification.value = mod
+  for (const g of groups.value) {
+    selected[g.attributeName] = getModAttr(mod, g.attributeName) ?? null
+  }
+}
+
+const addTowhishlist = async () => {
+  const res = await toggleFavorite(currentModification.value.id)
+  console.log('Ответ сервера:', res)
+  if (res.is_favorite) {
+    isLike.value = true
+  } else {
+    isLike.value = false
+  }
+}
+const checkhWishlist = async () => {
+  const check = await checkFavorites(currentModification.value.id)
+  console.log('Ответ checkhWishlist:', check)
+
+  const productId = currentModification.value.id
+  const favorites = check?.favorites || {}
+
+  isLike.value = favorites[productId] === true
+}
+
+watch(
+  () => [props.product, route.params.slug?.[0]],
+  () => {
+    if (!props.product) return
+    initFromSlug()
+  },
+  { immediate: true }
+)
+watch(
+  () => currentModification.value,
+  () => {
+    if (!currentModification.value) return
+    checkhWishlist();
+  },
+  { immediate: true }
+)
+
 const isModalSizeOpen = ref(false)
-const openModalSize = () => {
-  isModalSizeOpen.value = true
-}
+const openModalSize = () => (isModalSizeOpen.value = true)
+
+const titleText = computed(() => currentModification.value?.displayName || props.product?.name || '')
+const priceText = computed(() => currentModification.value?.price ?? props.product?.basePrice ?? null)
+
+/** Характеристики текущей модификации */
+const currentAttributes = computed(() => {
+  const attrs = currentModification.value?.attributes || {}
+  const result = { ...attrs }
+  for (const g of groups.value) {
+    const key = g.attributeName
+    if (result[key] == null && selected[key] != null) {
+      result[key] = selected[key]
+    }
+  }
+  if (currentModification.value?.sku) result['sku'] = currentModification.value.sku
+  return result
+})
+
+
 </script>
 <template>
   <div class="desk">
     <div class="desk__top">
-      <div class="title">{{ desk.title }}</div>
+      <div class="title">{{ titleText }}</div>
       <div class="icons">
         <NuxtLink to="/">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -83,8 +207,9 @@ const openModalSize = () => {
               fill="#5F5F5F" />
           </svg>
         </NuxtLink>
-        <button to="/" class="like">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <button @click="addTowhishlist" class="like">
+          <svg :class="{ whishActive: isLike }" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
             <path
               d="M16.5 4C19.0523 4 21 5.94772 21 8.5C21 10.3141 20.0157 11.9822 18.5947 13.6426C17.1667 15.3111 15.1409 17.1444 12.7842 19.2783L12.707 19.3574L12 20.0645L11.293 19.3574L11.2148 19.2783C8.85839 17.1446 6.83315 15.311 5.40527 13.6426C3.98429 11.9822 3 10.3141 3 8.5C3 5.94772 4.94772 4 7.5 4C9.1852 4 10.8424 4.93355 11.6914 6.36035H12.3164C13.1599 4.93169 14.8178 4 16.5 4Z"
               stroke="#C9C9D1" stroke-width="2" />
@@ -92,43 +217,59 @@ const openModalSize = () => {
         </button>
       </div>
     </div>
-    <div class="desk__rev">
+    <!-- <div class="desk__rev">
       <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M8.50014 12.2327L11.4397 14.0106C11.9781 14.3364 12.6368 13.8548 12.4951 13.2456L11.716 9.90225L14.3156 7.64975C14.7901 7.23892 14.5351 6.45975 13.9118 6.41017L10.4906 6.11975L9.15181 2.96059C8.91098 2.38684 8.08931 2.38684 7.84848 2.96059L6.50973 6.11267L3.08848 6.40309C2.46514 6.45267 2.21014 7.23184 2.68473 7.64267L5.28431 9.89517L4.50514 13.2385C4.36348 13.8477 5.02223 14.3293 5.56056 14.0035L8.50014 12.2327Z"
           fill="#EEBA00" />
       </svg>
-      {{ desk.star }}
-      <span>({{ desk.reviews }})</span>
-    </div>
-    <div class="desk__colors">
-      <div class="images">
-        <img v-for="(color, index) in desk.colors" :key="'img-' + index" :src="color.image" :alt="color.title"
-          :class="{ active: activeColorIndex === index }" @click="setActiveColor(index)" />
+      {{ desk?.star }}
+      <span>({{ desk?.reviews }})</span>
+    </div> -->
+    <div class="desk__modifications">
+      <!-- COLOR: превью-картинки -->
+      <div class="desk__colors" v-if="colorGroup">
+        <div class="images">
+          <img v-for="color in colorGroup.values" :key="'color-img-' + color" :src="getColorPreview(color)"
+            :alt="String(color)" :class="{
+              active: selected[colorGroup.attributeName] === color,
+              disabled: !isValueAvailable(colorGroup.attributeName, color)
+            }"
+            @click="onSelectValue(colorGroup.attributeName, color, !isValueAvailable(colorGroup.attributeName, color))" />
+        </div>
+        <div class="text">
+          <p v-for="color in colorGroup.values" :key="'color-text-' + color"
+            :class="{ active: selected[colorGroup.attributeName] === color }">
+            {{ colorGroup.displayName }}: <span>{{ color }}</span>
+          </p>
+        </div>
       </div>
-      <div class="text">
-        <p v-for="(color, index) in desk.colors" :key="'text-' + index" :class="{ active: activeColorIndex === index }">
-          Модификация: <span>{{ color.title }}</span>
-        </p>
+      <div class="desk__group" v-for="group in nonColorGroups" :key="'group-' + group.attributeName">
+        <div class="desk__sizes">
+          <div class="desk__sizes-top">
+            <div class="title">{{ group.displayName }}</div>
+            <!-- Пример кнопки таблицы размеров оставим общим (опционально показывать лишь для size) -->
+            <button v-if="group.attributeName.toLowerCase() === 'size'" @click="openModalSize">
+              Таблица размеров
+            </button>
+          </div>
+
+          <Swiper class="desk__sizes-wrap" :slides-per-view="'auto'" :space-between="8">
+            <SwiperSlide class="size" v-for="val in group.values" :key="group.attributeName + '-' + val" :class="{
+              active: selected[group.attributeName] === val,
+              disabled: !isValueAvailable(group.attributeName, val)
+            }" @click="onSelectValue(group.attributeName, val, !isValueAvailable(group.attributeName, val))">
+              {{ val }}
+            </SwiperSlide>
+          </Swiper>
+        </div>
       </div>
-    </div>
-    <div class="desk__sizes">
-      <div class="desk__sizes-top">
-        <div class="title">Размер</div>
-        <button @click="openModalSize">Таблица размеров</button>
-      </div>
-      <Swiper class="desk__sizes-wrap" :slides-per-view="'auto'" :space-between="8">
-        <SwiperSlide class="size" v-for="(size, index) in desk.sizes" :key="size"
-          :class="{ active: activeSizeIndex === index }" @click="setActiveSize(index)">
-          {{ size }}
-        </SwiperSlide>
-      </Swiper>
     </div>
     <div class="desk__har">
       <div class="title">Характеристики</div>
-      <div class="har" v-for="har in desk.har" :key="har">
-        <span>{{ har.title }}</span>
-        <span>{{ har.text }}</span>
+      <div class="har" v-for="(value, key) in currentAttributes" :key="'attr-' + key">
+        <span>{{ key }}</span>
+        <span>{{ value }}</span>
       </div>
       <button @click="emit('toggleHarActive', true)">Показать больше
         <svg width="17" height="8" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -156,6 +297,9 @@ const openModalSize = () => {
   width: 100%
   max-width: calc(382px * 100% / 1296px)
   height: 100%
+  .disabled
+    cursor: none !important
+    opacity: .5  
   .title 
     font-weight: bold
     font-size: 20px

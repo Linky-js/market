@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick, defineProps } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Pagination, Navigation, Thumbs } from 'swiper/modules'
 
@@ -8,24 +8,32 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import 'swiper/css/thumbs'
 
-const images = [
-  '/img/product-big.jpg',
-  '/img/product.jpg',
-  '/img/product-big.jpg',
-  '/img/product.jpg',
-  '/img/product-big.jpg',
-  '/img/product.jpg',
-  '/img/product-big.jpg',
-  '/img/product.jpg',
-  '/img/product-big.jpg',
-  '/img/product.jpg',
-  '/img/product-big.jpg',
-  '/img/product.jpg',
-  '/img/product-big.jpg',
-  '/img/product.jpg',
-  '/img/product-big.jpg',
-  '/img/product.jpg',
-]
+
+const props = defineProps({
+  images: {
+    type: Array,
+    required: false,
+    default: () => []
+  }
+})
+// const images = [
+//   '/img/product-big.jpg',
+//   '/img/product.jpg',
+//   '/img/product-big.jpg',
+//   '/img/product.jpg',
+//   '/img/product-big.jpg',
+//   '/img/product.jpg',
+//   '/img/product-big.jpg',
+//   '/img/product.jpg',
+//   '/img/product-big.jpg',
+//   '/img/product.jpg',
+//   '/img/product-big.jpg',
+//   '/img/product.jpg',
+//   '/img/product-big.jpg',
+//   '/img/product.jpg',
+//   '/img/product-big.jpg',
+//   '/img/product.jpg',
+// ]
 
 
 const thumbsSwiperMain = ref(null)   
@@ -73,7 +81,7 @@ onUnmounted(() => {
   <div class="slider">
     <Swiper v-if="!isMobile" class="slider-left" direction="vertical" :slides-per-view="'auto'" :space-between="8"
       @swiper="thumbsSwiperMain = $event" :watch-slides-progress="true">
-      <SwiperSlide v-for="(img, i) in images" :key="'thumb-' + i">
+      <SwiperSlide v-for="(img, i) in props.images" :key="'thumb-' + i">
         <img :src="img" />
       </SwiperSlide>
     </Swiper>

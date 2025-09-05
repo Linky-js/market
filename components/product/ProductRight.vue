@@ -1,5 +1,28 @@
 <script setup>
 import buttonCart from '../ui/buttonCart.vue';
+import { ref, defineProps, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+
+const currentModification = ref(null)
+const props = defineProps({
+  product: {
+    type: Object,
+    required: false,
+  },
+})
+
+const setCurrentModification = () => {
+  let modifications = props.product.modifications;
+  let currentSlug = route.params.slug[0];
+  for (let i = 0; i < modifications.length; i++) {
+    if (modifications[i].slug === currentSlug) {
+      currentModification.value = modifications[i];
+      break;
+    }
+  }
+};
 const right = {
   title: 'Пылесос Xiaomi DEERMA DX700 Белый',
   price: '5 864',
@@ -13,35 +36,44 @@ const right = {
   star: '4.7',
   reviews: '126'
 }
+watch(
+  () => [props.product, route.params.slug?.[0]],
+  () => {
+    if (!props.product) return
+    // если групп нет — делать нечего
+    setCurrentModification()
+  },
+  { immediate: true }
+)
 </script>
 <template>
   <div class="right">
-    <div class="title">{{ right.title }}</div>
+    <div class="title">{{ currentModification.displayName }}</div>
     <div class="wrap-price">
-      <div v-if="!right.newprice" class="price">
-        {{ right.price }} <span>₽</span>
+      <div v-if="!currentModification.newprice" class="price">
+        {{ currentModification.price }} <span>₽</span>
       </div>
-      <div v-if="right.newprice" class="newprice">
+      <div v-if="currentModification.newprice" class="newprice">
         <div class="newprice__price">
-          <div>{{ right.newprice }} <span>₽</span></div>
-          <div>{{ right.oldprice }} <span>₽</span></div>
+          <div>{{ currentModification.newprice }} <span>₽</span></div>
+          <div>{{ currentModification.oldprice }} <span>₽</span></div>
         </div>
-        <div class="sale">{{ right.discount }}</div>
+        <div class="sale">{{ currentModification.discount }}</div>
       </div>
     </div>
     <buttonCart class="btn-product" />
     <div class="del">
       <div class="del__item">
         <div class="del__item-text">
-          Доставка <span>{{ right.delivery }}</span>
+          Доставка <span>{{ currentModification.delivery }}</span>
         </div>
         <div class="del__item-price">
-          {{ right.deliveryPrice }} <span>₽</span>
+          {{ currentModification.deliveryPrice }} <span>₽</span>
         </div>
       </div>
       <div class="del__item">
         <div class="del__item-text">
-          В пунтке выдачи <span>{{ right.punkt }}</span>
+          В пунтке выдачи <span>{{ currentModification.punkt }}</span>
         </div>
         <div class="del__item-price">
           0 <span>₽</span>

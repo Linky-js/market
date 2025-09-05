@@ -1,4 +1,3 @@
-// composables/useAuthCheck.js
 import { jwtDecode } from 'jwt-decode'
 import { useCookie, useFetch } from '#app'
 
@@ -9,23 +8,27 @@ export const useAuthCheck = async () => {
   const isExpired = (token) => {
     try {
       const { exp } = jwtDecode(token)
+      console.log('token', exp); 
       return Date.now() >= exp * 1000
     } catch (e) {
       return true
     }
   }
 
-  if (!accessToken.value || isExpired(accessToken.value)) {
+  if (!accessToken.value ) {
+    console.log('Токен истёк');
+    
     // access истёк
-    if (!refreshToken.value || isExpired(refreshToken.value)) {
-      // refresh истёк
+    if (!refreshToken.value) {
+      console.log('Токен истёк2');
+      // refresh истёк → это реально логаут
       accessToken.value = null
       refreshToken.value = null
       return false
     }
 
     // обновление токена
-    const { data, error } = await useFetch('https://api.skynet-cloud.ru/api/auth/refresh', {
+    const { data } = await useFetch('https://api.skynet-cloud.ru/api/auth/refresh', {
       method: 'POST',
       body: {
         refresh_token: refreshToken.value,
@@ -33,11 +36,17 @@ export const useAuthCheck = async () => {
     })
 
     if (data.value?.access_token) {
-      accessToken.value = data.value.access_token
-      refreshToken.value = data.value.refresh_token
+      const newAccess = useCookie('access_token', { maxAge: 60 * 60 * 1 })
+      const newRefresh = useCookie('refresh_token', { maxAge: 60 * 60 * 24 * 1 })
+
+      newAccess.value = data.value.access_token
+      newRefresh.value = data.value.refresh_token
+
       return true
     } else {
-      // refresh не сработал
+      // refresh не сработал → логаут
+      console.log('Не удалось обновить токен');
+      
       accessToken.value = null
       refreshToken.value = null
       return false

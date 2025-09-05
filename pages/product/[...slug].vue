@@ -22,21 +22,9 @@ const { data: productResponse } = await useAsyncData(
   `product-${route.params.slug[0]}`,
   () =>
     $fetch(
-      `https://api.skynet-cloud.ru/api/catalog/products/full-details/slug/${route.params.slug[0]}`
+      `https://api.skynet-cloud.ru/api/catalog/cards/by-slug/${route.params.slug[0]}`
     )
 );
-
-// const groupProducts = ref([]);
-// if (productResponse.value?.is_group) {
-//   const { data: groupResponse } = await useAsyncData(
-//     `group-${productResponse.value.id}`, 
-//     () =>
-//       $fetch(
-//         `https://api.skynet-cloud.ru/api/catalog/groups/${productResponse.value.id}`
-//       )
-//   );
-//   groupProducts.value = groupResponse.value || [];
-// }
 onMounted(() => {
   console.log('Товар:', productResponse.value);
 })
@@ -47,11 +35,11 @@ onMounted(() => {
   <div class="product">
     <BreadBlock />
     <div class="product__top">
-      <ProductSlide />
-      <ProductDesk @toggleHarActive="goCharakteristick($event)" />
-      <ProductRight />
+      <ProductSlide :images="productResponse?.images" />
+      <ProductDesk @toggleHarActive="goCharakteristick($event)" :product="productResponse" />
+      <ProductRight :product="productResponse" />
     </div>
-    <ProductAbout @toggleHarActive="goCharakteristick($event)" :charakteristick="charakteristick" />
+    <ProductAbout @toggleHarActive="goCharakteristick($event)" :product="productResponse" :charakteristick="charakteristick" />
     <SliderProducts :title="'Похожие товары'" />
     <ProductReviews />
   </div>

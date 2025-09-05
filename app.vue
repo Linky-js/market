@@ -32,6 +32,9 @@ onMounted(async () => {
   const isValid = await useAuthCheck()
   if (isValid) {
     user.value = await useFetchUser()
+    store.setUser(user.value)
+    let newUser = store.user
+    console.log('newUser', newUser);
   }
   getCategories();
 })
