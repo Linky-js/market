@@ -157,9 +157,7 @@ const products = [
     <div class="like">
       <h2 v-if="props.title">{{ props.title }}</h2>
       <div class="products">
-        <!-- <ProductBlock v-for="product in products" :key="product.title" :title="product.title" :image="product.image"
-          :price="product.price" :newprice="product.newprice" :discount="product.discount" :star="product.star"
-          :reviews="product.reviews" /> -->
+        <ProductBlock v-for="product in products" :key="product.title" :product="product" />
       </div>
     </div>
   </div>

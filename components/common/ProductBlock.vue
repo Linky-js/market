@@ -1,17 +1,37 @@
 <script setup>
-import { ref, onMounted, watch, defineProps } from "vue";
+import { ref, watch, defineProps } from "vue";
 import buttonCart from "../ui/buttonCart.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
+
 import { useFavorites } from '~/composables/useFavorites'
+import { useFavoritesStore } from '@/stores/favorites'
 
-const { toggleFavorite, checkFavorites } = useFavorites()
+const { toggleFavorite } = useFavorites()
+const favoritesStore = useFavoritesStore()
 
-const isLike = ref(false);
 const swiperRef = ref(null);
+const loading = ref(true);
+
+const props = defineProps({
+  product: {
+    type: Object,
+    required: true,
+  },
+});
+
+watch(
+  () => props.product.name && props.product.name != "",
+  () => {
+    setTimeout(() => {
+      loading.value = false;
+    }, 200);
+  },
+  { immediate: true }
+);
 
 const setSwiper = (swiper) => {
   swiperRef.value = swiper;
@@ -36,45 +56,20 @@ const goToSlide = (index) => {
     swiperRef.value.slideTo(index);
   }
 };
-const loading = ref(true);
 
-const props = defineProps({
-  product: {
-    type: Object,
-    required: false,
-  },
-});
-watch(
-  () => props.product.name && props.product.name != "",
-  () => {
-    setTimeout(() => {
-      loading.value = false;
-    }, 200);
-  },
-  { immediate: true }
-);
-const addTowhishlist = async () => {
-  const res = await toggleFavorite(props.product.id)
-  console.log('Ответ сервера:', res)
-  if (res.is_favorite) {
-    isLike.value = true
-  } else {
-    isLike.value = false
-  }
-}
-const checkhWishlist = async () => {
-  const check = await checkFavorites(props.product.id)
-  
-
-  const productId = props.product.id
-  const favorites = check?.favorites || {}
-
-  isLike.value = favorites[productId] === true
-}
-onMounted(() => {
-  checkhWishlist()
+// Проверяем в сторе
+const isLike = computed(() => {
+  return favoritesStore.favorites[props.product.id] === true
 })
 
+// Тоггл избранного
+const addToWishlist = async () => {
+  const res = await toggleFavorite(props.product.id)
+  console.log("Ответ сервера:", res)
+
+  // обновим в сторе
+  favoritesStore.favorites[props.product.id] = res?.is_favorite === true
+}
 </script>
 <template>
   <div v-if="loading" class="block bg-gray-200 animate-pulse"></div>
@@ -106,7 +101,7 @@ onMounted(() => {
       </div>
 
       <div v-if="props.product.discount" class="sale">{{ props.product.discount }}</div>
-      <button @click="addTowhishlist" class="like">
+      <button @click.stop.prevent="addToWishlist" class="like">
         <svg
         :class="{ whishActive: isLike }"
           width="24"
@@ -131,7 +126,7 @@ onMounted(() => {
       <div>{{ props.product.price }} <span>₽</span></div>
     </div>
     <NuxtLink :to="'/product/' + props.product.slug" class="title">
-      {{ props.product.title }}
+      {{ props.product.product_name }}
     </NuxtLink>
     <div class="flex items-center gap-1">
       <div class="star">
