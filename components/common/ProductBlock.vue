@@ -1,17 +1,37 @@
 <script setup>
-import { ref, onMounted, watch, defineProps } from "vue";
+import { ref, watch, defineProps } from "vue";
 import buttonCart from "../ui/buttonCart.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Pagination } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
+
 import { useFavorites } from '~/composables/useFavorites'
+import { useFavoritesStore } from '@/stores/favorites'
 
-const { toggleFavorite, checkFavorites } = useFavorites()
+const { toggleFavorite } = useFavorites()
+const favoritesStore = useFavoritesStore()
 
-const isLike = ref(false);
 const swiperRef = ref(null);
+const loading = ref(true);
+
+const props = defineProps({
+  product: {
+    type: Object,
+    required: true,
+  },
+});
+
+watch(
+  () => props.product.name && props.product.name != "",
+  () => {
+    setTimeout(() => {
+      loading.value = false;
+    }, 200);
+  },
+  { immediate: true }
+);
 
 const setSwiper = (swiper) => {
   swiperRef.value = swiper;
@@ -36,77 +56,68 @@ const goToSlide = (index) => {
     swiperRef.value.slideTo(index);
   }
 };
-const loading = ref(true);
 
-const props = defineProps({
-  product: {
-    type: Object,
-    required: false,
-  },
-});
-watch(
-  () => props.product.name && props.product.name != "",
-  () => {
-    setTimeout(() => {
-      loading.value = false;
-    }, 200);
-  },
-  { immediate: true }
-);
-const addTowhishlist = async () => {
-  const res = await toggleFavorite(props.product.id)
-  console.log('Ответ сервера:', res)
-  if (res.is_favorite) {
-    isLike.value = true
-  } else {
-    isLike.value = false
-  }
-}
-const checkhWishlist = async () => {
-  const check = await checkFavorites(props.product.id)
-
-
-  const productId = props.product.id
-  const favorites = check?.favorites || {}
-
-  isLike.value = favorites[productId] === true
-}
-onMounted(() => {
-  checkhWishlist()
+// Проверяем в сторе
+const isLike = computed(() => {
+  return favoritesStore.favorites[props.product.id] === true
 })
 
+// Тоггл избранного
+const addToWishlist = async () => {
+  const res = await toggleFavorite(props.product.id)
+  console.log("Ответ сервера:", res)
+
+  // обновим в сторе
+  favoritesStore.favorites[props.product.id] = res?.is_favorite === true
+}
 </script>
 <template>
   <div v-if="loading" class="block bg-gray-200 animate-pulse"></div>
   <div v-else class="product">
-    <div class="img">
-      <NuxtLink :to="'/product/' + props.product.slug">
-        <div class="img__slider">
-          <Swiper v-if="props.product.all_images && props.product.all_images.length > 1" :slides-per-view="1"
-            :space-between="12" @swiper="setSwiper" class="slider" @mousemove="onMouseMove" @mouseleave="onMouseLeave">
-            <SwiperSlide v-for="image in props.product.all_images" :key="image">
-              <NuxtImg :src="image.image_url" format="webp" />
-            </SwiperSlide>
-            <div class="custom-pagination" @mousemove.stop>
-              <button v-for="(image, index) in props.product.all_images" :key="index"
-                :class="{ active: swiperRef?.activeIndex === index }" @click="goToSlide(index)"></button>
-            </div>
-          </Swiper>
-          <NuxtImg v-else
-            :src="props.product?.main_image?.image_url ? props.product?.main_image?.image_url : 'https://saldovka.com/wp-content/uploads/2015/06/41i5587c510d477a.jpeg'"
-            format="webp" />
-        </div>
-      </NuxtLink>
+    <NuxtLink :to="'/product/' + props.product.slug" class="img">
+      <div class="img__slider">
+        <Swiper
+          v-if="props.product.all_images && props.product.all_images.length > 1"
+          :slides-per-view="1"
+          :space-between="12"
+          @swiper="setSwiper"
+          class="slider"
+          @mousemove="onMouseMove"
+          @mouseleave="onMouseLeave"
+        >
+          <SwiperSlide v-for="image in props.product.all_images" :key="image">
+            <NuxtImg :src="image.image_url" format="webp" />
+          </SwiperSlide>
+          <div class="custom-pagination" @mousemove.stop>
+            <button
+              v-for="(image, index) in props.product.all_images"
+              :key="index"
+              :class="{ active: swiperRef?.activeIndex === index }"
+              @click="goToSlide(index)"
+            ></button>
+          </div>
+        </Swiper>
+        <NuxtImg v-else :src="props.product?.main_image?.image_url ? props.product?.main_image?.image_url : 'https://saldovka.com/wp-content/uploads/2015/06/41i5587c510d477a.jpeg'" format="webp" />
+      </div>
+
       <div v-if="props.product.discount" class="sale">{{ props.product.discount }}</div>
-      <button @click="addTowhishlist" class="like">
-        <svg :class="{ whishActive: isLike }" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          xmlns="http://www.w3.org/2000/svg">
+      <button @click.stop.prevent="addToWishlist" class="like">
+        <svg
+        :class="{ whishActive: isLike }"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             d="M16.5 4C19.0523 4 21 5.94772 21 8.5C21 10.3141 20.0157 11.9822 18.5947 13.6426C17.1667 15.3111 15.1409 17.1444 12.7842 19.2783L12.707 19.3574L12 20.0645L11.293 19.3574L11.2148 19.2783C8.85839 17.1446 6.83315 15.311 5.40527 13.6426C3.98429 11.9822 3 10.3141 3 8.5C3 5.94772 4.94772 4 7.5 4C9.1852 4 10.8424 4.93355 11.6914 6.36035H12.3164C13.1599 4.93169 14.8178 4 16.5 4Z"
-            stroke="#C9C9D1" stroke-width="2" />
+            stroke="#C9C9D1"
+            stroke-width="2"
+          />
         </svg>
       </button>
-    </div>
+    </NuxtLink>
     <div v-if="!props.product.newprice" class="price">
       {{ props.product.price }} <span>₽</span>
     </div>
@@ -115,14 +126,21 @@ onMounted(() => {
       <div>{{ props.product.price }} <span>₽</span></div>
     </div>
     <NuxtLink :to="'/product/' + props.product.slug" class="title">
-      {{ props.product.title }}
+      {{ props.product.product_name }}
     </NuxtLink>
     <div class="flex items-center gap-1">
       <div class="star">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             d="M7.99956 11.5135L10.7662 13.1868C11.2729 13.4935 11.8929 13.0402 11.7596 12.4668L11.0262 9.32017L13.4729 7.20017C13.9196 6.8135 13.6796 6.08017 13.0929 6.0335L9.87289 5.76017L8.61289 2.78684C8.38623 2.24684 7.61289 2.24684 7.38623 2.78684L6.12623 5.7535L2.90623 6.02684C2.31956 6.0735 2.07956 6.80684 2.52623 7.1935L4.97289 9.3135L4.23956 12.4602C4.10623 13.0335 4.72623 13.4868 5.23289 13.1802L7.99956 11.5135Z"
-            fill="#EEBA00" />
+            fill="#EEBA00"
+          />
         </svg>
         {{ props.product.star }}
       </div>
@@ -154,7 +172,6 @@ onMounted(() => {
   position: relative
   width: 100%
   display: block
-  margin-bottom: 12px
   img
     width: 100%
     height: 243px

@@ -24,6 +24,15 @@ const getCategories = async () => {
     console.error('Ошибка при получении категорий', error);
   }
 }
+const getFavorites = async () => {
+  try {
+    const response = await fetch('https://api.skynet-cloud.ru/api/favorites/list');
+    const json = await response.json();
+    store.setFavorites(json);
+  } catch (error) {
+    console.error('Ошибка при получении категорий', error);
+  }
+}
 
 onMounted(async () => {
   console.log(user.value);

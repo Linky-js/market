@@ -63,7 +63,7 @@ onUnmounted(() => {
       <MobFilterFilter />
     </div>
     <div class="products">
-      <ProductBlock v-for="product in props.products" :key="product.title" :product="product" />
+      <ProductBlock v-for="product in props.products" :key="product.title" :product="product.product" />
       <div ref="loadMoreTrigger" class="load-more-trigger"></div>
     </div>
   </div>
